@@ -23,8 +23,8 @@ public class SampleJob extends Job {
 			String url = "jdbc:oracle:thin:@ora-vm5-015.ebi.ac.uk:1551:LITPUB";
 			Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();
 			c = DriverManager.getConnection(url, "CDB_READ_CHEMBL", "readonly");
-			//pstmt = c.prepareStatement("SELECT * from CDB.CITATIONS where source = 'MED'");
-			pstmt = c.prepareStatement("select * from CDB.CITATIONS where external_id = '20814568'");
+			pstmt = c.prepareStatement("SELECT * from CDB.CITATIONS where source = 'MED'");
+//			pstmt = c.prepareStatement("select * from CDB.CITATIONS where external_id = '20814568'");
 			
 			//pstmt.setMaxRows(1000);
 			rs = pstmt.executeQuery();
