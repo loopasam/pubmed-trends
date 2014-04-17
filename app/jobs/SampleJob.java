@@ -47,7 +47,12 @@ public class SampleJob extends Job {
 				
 				Logger.info("Record (PMID: " + pmid + ") - " + counter + "/" + total);
 				counter++;
-				new Citation(pmid, title, abstractText, created).save();
+				try{
+					new Citation(pmid, title, abstractText, created).save();
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+				
 				
 				if (counter%1000 == 0) {
 					Citation.em().flush();
