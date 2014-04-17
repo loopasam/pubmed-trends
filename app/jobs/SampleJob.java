@@ -51,13 +51,14 @@ public class SampleJob extends Job {
 					new Citation(pmid, title, abstractText, created).save();
 				}catch(Exception e){
 					e.printStackTrace();
+				}finally{
+					if (counter%1000 == 0) {
+						Citation.em().flush();
+						Citation.em().clear();
+					}
 				}
 				
 				
-				if (counter%1000 == 0) {
-					Citation.em().flush();
-					Citation.em().clear();
-				}
 			}
 
 		}catch(Exception e){
