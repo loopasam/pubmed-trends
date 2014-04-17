@@ -1,0 +1,15 @@
+# Application dependencies
+
+require:
+    - play
+    - org.apache.lucene -> lucene-core 4.7.2
+    - org.apache.lucene -> lucene-analyzers-common 4.7.2
+    - org.apache.lucene -> lucene-queryparser 4.7.2
+    - provided -> ojdbc14 10.2.0.4.0
+      
+repositories:
+  - provided:
+      type:       local
+      artifact:   "${application.path}/jar/[module]-[revision].jar"
+      contains:
+        - provided -> *
