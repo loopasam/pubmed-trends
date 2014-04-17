@@ -1,7 +1,5 @@
 package jobs;
 
-import groovyjarjarantlr.TokenStream;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -45,13 +43,19 @@ public class LuceneIndexing extends Job {
 		IndexWriter iwriter = new IndexWriter(directory, config);
 
 				List<Citation> citations = Citation.findAll();
+				int total = citations.size();
+				int counter = 1;
+				
 				for (Citation citation : citations) {
+					Logger.info("Document: " + counter + "/" + total);
+					counter++;
+					
 					Document doc = new Document();
 					if(citation.abstractText != null){
 						doc.add(new Field("abstract", citation.abstractText, TextField.TYPE_STORED));
 					}
 					doc.add(new Field("title", citation.title, TextField.TYPE_STORED));
-					doc.add(new Field("title", DateTools.dateToString(citation.created, DateTools.Resolution.MINUTE), TextField.TYPE_STORED));
+					doc.add(new Field("date", DateTools.dateToString(citation.created, DateTools.Resolution.MINUTE), TextField.TYPE_STORED));
 					iwriter.addDocument(doc);
 				}
 

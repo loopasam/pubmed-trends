@@ -43,7 +43,7 @@ public class SampleJob extends Job {
 				String pmid = rs.getString("EXTERNAL_ID");
 				String created = rs.getString("CREATED");
 				
-				Logger.info("Record: " + counter + "/" + total);
+				Logger.info("Record (PMID: " + pmid + ") - " + counter + "/" + total);
 				counter++;
 				new Citation(pmid, title, abstractText, created).save();
 				
