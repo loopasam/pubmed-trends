@@ -2,6 +2,8 @@ package jobs;
 
 import java.sql.*;
 
+import org.h2.engine.Database;
+
 import models.Citation;
 
 import play.Logger;
@@ -12,6 +14,7 @@ public class SampleJob extends Job {
 
 	public void doJob() {
 		Logger.info("Getting data...");
+
 
 		Fixtures.delete(Citation.class);
 
@@ -24,7 +27,6 @@ public class SampleJob extends Job {
 			Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();
 			c = DriverManager.getConnection(url, "CDB_READ_CHEMBL", "readonly");
 			pstmt = c.prepareStatement("SELECT * from CDB.CITATIONS where source = 'MED'");
-			//			pstmt = c.prepareStatement("select * from CDB.CITATIONS where external_id = '20814568'");
 
 			//pstmt.setMaxRows(1000);
 			rs = pstmt.executeQuery();
@@ -47,7 +49,7 @@ public class SampleJob extends Job {
 
 				Logger.info("Record (PMID: " + pmid + ") - " + counter + "/" + total);
 				counter++;
-				
+
 				new Citation(pmid, title, abstractText, created).save();
 				if (counter%1000 == 0) {
 					Citation.em().flush();
