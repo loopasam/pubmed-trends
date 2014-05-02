@@ -1,24 +1,14 @@
 package jobs;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import models.Citation;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.shingle.ShingleAnalyzerWrapper;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.*;
-import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
@@ -30,44 +20,50 @@ import utils.CustomStandardAnalyzer;
 
 public class LuceneIndexing extends Job {
 
-	public void doJob() throws IOException, ParseException{
+    private final static int STEP = 1000;
+    IndexWriter iwriter;
 
-		Logger.info("Indexing started...");		
+    @Override
+    public void doJob() throws Exception {
 
-		Analyzer analyzer = new CustomStandardAnalyzer(Version.LUCENE_47);
-		
-		ShingleAnalyzerWrapper shingleAnalyzer = new ShingleAnalyzerWrapper(analyzer, 2, 3);
+        Logger.info("Indexing started...");
 
-		Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/lucene").getRealFile());
-		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_47, shingleAnalyzer);
-		IndexWriter iwriter = new IndexWriter(directory, config);
+        Analyzer analyzer = new CustomStandardAnalyzer(Version.LUCENE_47);
 
-				List<Citation> citations = Citation.findAll();
-				int total = citations.size();
-				int counter = 1;
-				
-				for (Citation citation : citations) {
-					Logger.info("Document: " + counter + "/" + total);
-					counter++;
-					
-					Document doc = new Document();
-					if(citation.abstractText != null){
-						doc.add(new Field("abstract", citation.abstractText, TextField.TYPE_STORED));
-					}
-					doc.add(new Field("title", citation.title, TextField.TYPE_STORED));
-					doc.add(new Field("date", DateTools.dateToString(citation.created, DateTools.Resolution.MINUTE), TextField.TYPE_STORED));
-					iwriter.addDocument(doc);
-				}
+        ShingleAnalyzerWrapper shingleAnalyzer = new ShingleAnalyzerWrapper(analyzer, 2, 3);
 
-//		Document doc = new Document();
-//		doc.add(new Field("title", "Suppression of v-Src transformation by andrographolide via " +
-//				"degradation, of the v-Src protein and attenuation of " +
-//				"the Erk signaling pathway.", TextField.TYPE_STORED));
-//		iwriter.addDocument(doc);
+        Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/lucene").getRealFile());
+        IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_47, shingleAnalyzer);
+        iwriter = new IndexWriter(directory, config);
 
-		iwriter.close();
 
-		Logger.info("index done.");
-	}
+        //Iterate over the citations by packs of 1000
+        //The total number as now is: 23772097
+        int totalCitations = 23772097;
 
+        for (int i = 0; i < totalCitations; i += STEP) {
+
+            Logger.info("i: " + i + "/" + totalCitations);
+            List<Citation> citations = Citation.all().from(i).fetch(i + STEP);
+            indexCitations(citations);
+
+        }
+
+        iwriter.close();
+        Logger.info("index done.");
+    }
+
+    private void indexCitations(List<Citation> citations) throws Exception {
+
+        for (Citation citation : citations) {
+            
+            Document doc = new Document();
+            if (citation.abstractText != null) {
+                doc.add(new Field("abstract", citation.abstractText, TextField.TYPE_STORED));
+            }
+            doc.add(new Field("title", citation.title, TextField.TYPE_STORED));
+            doc.add(new Field("date", DateTools.dateToString(citation.created, DateTools.Resolution.MINUTE), TextField.TYPE_STORED));
+            iwriter.addDocument(doc);
+        }
+    }
 }

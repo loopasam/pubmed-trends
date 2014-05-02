@@ -21,6 +21,7 @@ server.pid
 *.eml
 /dist/
 .cache
+lucene/
 
 # Ignore configuration file #
 conf/application.conf
