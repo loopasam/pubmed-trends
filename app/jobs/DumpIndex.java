@@ -20,6 +20,7 @@ import play.vfs.VirtualFile;
 
 public class DumpIndex extends Job {
 
+        @Override
 	public void doJob() throws Exception {
 		
 		Logger.info("Dumping index...");
@@ -28,7 +29,7 @@ public class DumpIndex extends Job {
 
 		Terms terms = SlowCompositeReaderWrapper.wrap(ireader).terms("title"); 
 		TermsEnum iterator = terms.iterator(null);
-		BytesRef byteRef = null;
+		BytesRef byteRef;
 
 		HashMap<String,Integer> map = new HashMap<String,Integer>();
 		ValueComparator bvc =  new ValueComparator(map);

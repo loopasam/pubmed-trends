@@ -20,8 +20,7 @@ import utils.CustomStandardAnalyzer;
 
 public class LuceneIndexing extends Job {
 
-    private final static int STEP = 1000;
-    IndexWriter iwriter;
+    private final static int STEP = 10;
 
     @Override
     public void doJob() throws Exception {
@@ -34,24 +33,25 @@ public class LuceneIndexing extends Job {
 
         Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/lucene").getRealFile());
         IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_47, shingleAnalyzer);
+        IndexWriter iwriter = new IndexWriter(directory, config);
 
         //Iterate over the citations by packs of 1000
         //The total number as now is: 23772097
         long totalCitations = Citation.count();
 
-        for (int i = 0; i < totalCitations; i += STEP) {
+        for (int i = 0; i < 100; i += STEP) {
 
             Logger.info("i: " + i + "/" + totalCitations);
             List<Citation> citations = Citation.all().from(i).fetch(i + STEP);
-            iwriter = new IndexWriter(directory, config);
             indexCitations(citations, iwriter);
-            iwriter.close();
-
         }
+
+        iwriter.close();
 
         Logger.info("index done.");
     }
 
+    //TODO some results are present twice in the resulting index - weird
     private void indexCitations(List<Citation> citations, IndexWriter iwriter) throws Exception {
 
         for (Citation citation : citations) {

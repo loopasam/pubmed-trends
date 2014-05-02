@@ -30,12 +30,13 @@ import play.vfs.VirtualFile;
 
 public class LuceneQuery extends Job {
 	
-	String query;
+	String queryString;
 
 	public LuceneQuery(String query) {
-		this.query = query;
+		this.queryString = query;
 	}
 
+        @Override
 	public void doJob() throws IOException, ParseException{
 		Logger.info("Runnign query...");
 
@@ -46,9 +47,10 @@ public class LuceneQuery extends Job {
 		IndexSearcher isearcher = new IndexSearcher(ireader);
 		// Parse a simple query that searches for "text":
 		QueryParser parser = new QueryParser(Version.LUCENE_47, "title", analyzer);
-		Query query = parser.parse(this.query);
+		Query query = parser.parse(this.queryString);
 		ScoreDoc[] hits = isearcher.search(query, null, 1000).scoreDocs;
 		System.out.println("results: " + hits.length);
+                
 		for (int i = 0; i < hits.length; i++) {
 			Document hitDoc = isearcher.doc(hits[i].doc);
 			System.out.println(hitDoc.get("title"));
