@@ -28,7 +28,7 @@ public class SampleJob extends Job {
             c = DriverManager.getConnection(url, "CDB_READ_CHEMBL", "readonly");
             pstmt = c.prepareStatement("SELECT * from CDB.CITATIONS where source = 'MED'");
 
-            pstmt.setMaxRows(100000);
+            //pstmt.setMaxRows(100000);
             rs = pstmt.executeQuery();
             int counter = 1;
             int total = 23742757;
