@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -29,37 +30,39 @@ import play.jobs.Job;
 import play.vfs.VirtualFile;
 
 public class LuceneQuery extends Job {
-	
-	String queryString;
 
-	public LuceneQuery(String query) {
-		this.queryString = query;
-	}
+    String queryString;
 
-        @Override
-	public void doJob() throws IOException, ParseException{
-		Logger.info("Runnign query...");
+    public LuceneQuery(String query) {
+        this.queryString = query;
+    }
 
-		Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/lucene").getRealFile());
-		DirectoryReader ireader = DirectoryReader.open(directory);
+    @Override
+    public void doJob() throws IOException, ParseException {
+        Logger.info("Runnign query...");
 
-		Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_47);
-		IndexSearcher isearcher = new IndexSearcher(ireader);
-		// Parse a simple query that searches for "text":
-		QueryParser parser = new QueryParser(Version.LUCENE_47, "title", analyzer);
-		Query query = parser.parse(this.queryString);
-		ScoreDoc[] hits = isearcher.search(query, null, 1000).scoreDocs;
-		System.out.println("results: " + hits.length);
-                
-		for (int i = 0; i < hits.length; i++) {
-			Document hitDoc = isearcher.doc(hits[i].doc);
-			System.out.println(hitDoc.get("title"));
-		}
-		ireader.close();
-		directory.close();
-	}
+        Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/lucene").getRealFile());
+        DirectoryReader ireader = DirectoryReader.open(directory);
 
+        Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_47);
+        IndexSearcher isearcher = new IndexSearcher(ireader);
+        // Parse a simple query that searches for "text":
+        QueryParser parser = new QueryParser(Version.LUCENE_47, "title", analyzer);
+        System.out.println("Query: " + this.queryString);
+//        Query query = parser.parse(this.queryString);
 
+        Query query = parser.parse("\"" + this.queryString + "\"");
+        ScoreDoc[] hits = isearcher.search(query, null, 1000).scoreDocs;
+        System.out.println("results: " + hits.length);
+
+        for (int i = 0; i < hits.length; i++) {
+            
+            
+            Document hitDoc = isearcher.doc(hits[i].doc);
+            System.out.println(hitDoc.get("title") + " - " + hits[i].score);
+        }
+        ireader.close();
+        directory.close();
+    }
 
 }
-
