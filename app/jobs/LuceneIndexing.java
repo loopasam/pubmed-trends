@@ -18,26 +18,25 @@ import utils.CustomStandardAnalyzer;
 
 public class LuceneIndexing extends Job {
 
-    private final static int STEP = 10;
+    private final static int STEP = 1000;
 
     @Override
     public void doJob() throws Exception {
 
         Logger.info("Indexing started...");
 
-//        Analyzer analyzer = new CustomStandardAnalyzer(Version.LUCENE_47);
-//        ShingleAnalyzerWrapper shingleAnalyzer = new ShingleAnalyzerWrapper(analyzer, 2, 3);
-        Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_47);
+        Analyzer analyzer = new CustomStandardAnalyzer(Version.LUCENE_47);
+        ShingleAnalyzerWrapper shingleAnalyzer = new ShingleAnalyzerWrapper(analyzer, 2, 3);
 
         Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/lucene").getRealFile());
-        IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_47, analyzer);
+        IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_47, shingleAnalyzer);
         IndexWriter iwriter = new IndexWriter(directory, config);
 
         //Iterate over the citations by packs of 1000
         //The total number as now is: 23772097
         long totalCitations = Citation.count();
 
-        for (int i = 0; i < 100; i += STEP) {
+        for (int i = 0; i < totalCitations; i += STEP) {
 
             Logger.info("i: " + i + "/" + totalCitations);
             List<Citation> citations = Citation.all().from(i).fetch(STEP);

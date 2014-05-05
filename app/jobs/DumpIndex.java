@@ -28,6 +28,7 @@ public class DumpIndex extends Job {
         Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/lucene").getRealFile());
         DirectoryReader ireader = DirectoryReader.open(directory);
 
+        //Returns an error is the field does not exists
         Terms terms = SlowCompositeReaderWrapper.wrap(ireader).terms("abstract");
         TermsEnum iterator = terms.iterator(null);
         BytesRef byteRef;
@@ -39,10 +40,7 @@ public class DumpIndex extends Job {
         while ((byteRef = iterator.next()) != null) {
             String term = new String(byteRef.bytes, byteRef.offset, byteRef.length);
             int freq = iterator.docFreq();
-
-//            if (freq > 5) {
                 map.put(term, freq);
-//            }
         }
         sorted_map.putAll(map);
         System.out.println("results: " + sorted_map);
