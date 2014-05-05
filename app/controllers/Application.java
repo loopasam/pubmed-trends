@@ -5,6 +5,7 @@ import jobs.DumpIndex;
 import jobs.LuceneIndexing;
 import jobs.LuceneIndexingInDb;
 import jobs.LuceneQuery;
+import jobs.NewConceptIdentifier;
 import jobs.SampleJob;
 import jobs.SimpleIndexJob;
 import play.mvc.*;
@@ -48,6 +49,11 @@ public class Application extends Controller {
     
     public static void computeTrends() {
         new ComputeTrends().now();
+        index();
+    }
+    
+    public static void computeNewConcepts() {
+        new NewConceptIdentifier().now();
         index();
     }
 

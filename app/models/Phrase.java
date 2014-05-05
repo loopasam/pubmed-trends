@@ -21,6 +21,10 @@ public class Phrase extends Model {
     public int frequency;
     
     public double trend5years;
+    
+    public double volumetricTrend5years;
+    
+    public int apparitionDate;
 
     public Phrase(String value, int frequency) {
         this.value = value;

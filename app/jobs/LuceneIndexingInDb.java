@@ -23,8 +23,7 @@ import play.vfs.VirtualFile;
  * @author loopasam
  */
 public class LuceneIndexingInDb extends Job {
-
-    private final static int STEP = 1000;
+    private static final int FREQ_TRESHOLD = 4;
 
     @Override
     public void doJob() throws Exception {
@@ -49,7 +48,9 @@ public class LuceneIndexingInDb extends Job {
             int frequency = iterator.docFreq();
             //Save to DB
             //check if exists alread, if yes increase the counter, otherwise create
-            if (frequency > 5) {
+            //Saves only the terms with high frequency
+            //Removes the terms with a _ (from shigle index) and 4 decimals (dates)
+            if (frequency > FREQ_TRESHOLD && !term.contains("_") && !term.matches(".*\\d{4}.*")) {
                 new Phrase(term, frequency).save();
                 Logger.info("Term: " + term + " - freq: " + frequency);
             }

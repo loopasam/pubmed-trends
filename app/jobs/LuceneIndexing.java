@@ -25,7 +25,8 @@ public class LuceneIndexing extends Job {
 
         Logger.info("Indexing started...");
 
-        Analyzer analyzer = new CustomStandardAnalyzer(Version.LUCENE_47);
+//        Analyzer analyzer = new CustomStandardAnalyzer(Version.LUCENE_47);
+        Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_47);
         ShingleAnalyzerWrapper shingleAnalyzer = new ShingleAnalyzerWrapper(analyzer, 2, 3);
 
         Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/lucene").getRealFile());
@@ -43,9 +44,9 @@ public class LuceneIndexing extends Job {
             for (Citation citation : citations) {
 
                 Document doc = new Document();
-                if (citation.abstractText != null) {
-                    doc.add(new Field("abstract", citation.abstractText, TextField.TYPE_STORED));
-                }
+//                if (citation.abstractText != null) {
+//                    doc.add(new Field("abstract", citation.abstractText, TextField.TYPE_STORED));
+//                }
 
                 if (citation.title != null) {
                     doc.add(new Field("title", citation.title, TextField.TYPE_STORED));

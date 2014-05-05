@@ -29,7 +29,7 @@ public class DumpIndex extends Job {
         DirectoryReader ireader = DirectoryReader.open(directory);
 
         //Returns an error is the field does not exists
-        Terms terms = SlowCompositeReaderWrapper.wrap(ireader).terms("abstract");
+        Terms terms = SlowCompositeReaderWrapper.wrap(ireader).terms("title");
         TermsEnum iterator = terms.iterator(null);
         BytesRef byteRef;
 
