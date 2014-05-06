@@ -16,11 +16,10 @@ import org.apache.lucene.util.Version;
 import play.Logger;
 import play.jobs.Job;
 import play.vfs.VirtualFile;
-import utils.CustomStandardAnalyzer;
 
 public class LuceneIndexing extends Job {
 
-    private final static int STEP = 1000;
+    private final static int STEP = 100000;
 
     @Override
     public void doJob() throws Exception {
@@ -38,8 +37,9 @@ public class LuceneIndexing extends Job {
         
         //Iterate over the citations by packs of 1000
         //The total number as now is: 23772097
-        long totalCitations = Citation.count();
-
+        //long totalCitations = Citation.count();
+        int totalCitations = 23772097;
+        
         //Add time information for when the data is fetched from the database
         for (int i = 0; i < totalCitations; i += STEP) {
 
@@ -48,7 +48,7 @@ public class LuceneIndexing extends Job {
             stopwatchdb.start();
             List<Citation> citations = Citation.all().from(i).fetch(STEP);
             stopwatchdb.stop();
-            Logger.info("Time to query the DB: " + stopwatchdb.elapsed(TimeUnit.SECONDS));
+            Logger.info("Time to query the DB: " + stopwatchdb.elapsed(TimeUnit.MILLISECONDS));
 
             for (Citation citation : citations) {
 

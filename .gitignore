@@ -8,6 +8,7 @@
 bin/
 /db
 .eclipse
+nbproject/
 /lib/
 /logs/
 /modules
