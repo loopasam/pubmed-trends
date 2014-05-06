@@ -34,13 +34,13 @@ public class LuceneIndexing extends Job {
         IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_47, shingleAnalyzer);
         config.setRAMBufferSizeMB(1024);
         IndexWriter iwriter = new IndexWriter(directory, config);
-        
+
         //Iterate over the citations by packs of 1000
         //The total number as now is: 23772097
         //long totalCitations = Citation.count();
         int totalCitations = 23772097;
-        
-        //Add time information for when the data is fetched from the database
+
+        //Add time information for when the data is fetched from the database        
         for (int i = 0; i < totalCitations; i += STEP) {
 
             Logger.info("i: " + i + "/" + totalCitations);
@@ -48,7 +48,10 @@ public class LuceneIndexing extends Job {
             stopwatchdb.start();
             List<Citation> citations = Citation.all().from(i).fetch(STEP);
             stopwatchdb.stop();
-            Logger.info("Time to query the DB: " + stopwatchdb.elapsed(TimeUnit.MILLISECONDS));
+            Logger.info("Time to query the DB: " + stopwatchdb.elapsed(TimeUnit.SECONDS));
+
+            Stopwatch stopwatchindex = Stopwatch.createUnstarted();
+            stopwatchindex.start();
 
             for (Citation citation : citations) {
 
@@ -63,6 +66,10 @@ public class LuceneIndexing extends Job {
                 doc.add(new Field("date", DateTools.dateToString(citation.created, DateTools.Resolution.MINUTE), TextField.TYPE_STORED));
                 iwriter.addDocument(doc);
             }
+            
+            stopwatchindex.stop();
+            Logger.info("Time to index the documents: " + stopwatchindex.elapsed(TimeUnit.SECONDS));
+
         }
 
         iwriter.close();
