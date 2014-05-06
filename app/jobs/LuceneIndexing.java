@@ -1,6 +1,8 @@
 package jobs;
 
+import com.google.common.base.Stopwatch;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import models.Citation;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.shingle.ShingleAnalyzerWrapper;
@@ -33,15 +35,21 @@ public class LuceneIndexing extends Job {
         IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_47, shingleAnalyzer);
         config.setRAMBufferSizeMB(1024);
         IndexWriter iwriter = new IndexWriter(directory, config);
-
+        
         //Iterate over the citations by packs of 1000
         //The total number as now is: 23772097
         long totalCitations = Citation.count();
 
+        //Add time information for when the data is fetched from the database
         for (int i = 0; i < totalCitations; i += STEP) {
 
             Logger.info("i: " + i + "/" + totalCitations);
+            Stopwatch stopwatchdb = Stopwatch.createUnstarted();
+            stopwatchdb.start();
             List<Citation> citations = Citation.all().from(i).fetch(STEP);
+            stopwatchdb.stop();
+            Logger.info("Time to query the DB: " + stopwatchdb.elapsed(TimeUnit.SECONDS));
+
             for (Citation citation : citations) {
 
                 Document doc = new Document();
