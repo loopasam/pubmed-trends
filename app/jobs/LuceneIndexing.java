@@ -31,6 +31,7 @@ public class LuceneIndexing extends Job {
 
         Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/lucene").getRealFile());
         IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_47, shingleAnalyzer);
+        config.setRAMBufferSizeMB(1024);
         IndexWriter iwriter = new IndexWriter(directory, config);
 
         //Iterate over the citations by packs of 1000
