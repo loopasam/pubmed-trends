@@ -23,7 +23,7 @@ import play.vfs.VirtualFile;
  * @author loopasam
  */
 public class LuceneIndexingInDb extends Job {
-    private static final int FREQ_TRESHOLD = 4;
+    private static final int FREQ_TRESHOLD = 10;
 
     @Override
     public void doJob() throws Exception {
