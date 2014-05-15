@@ -28,11 +28,15 @@ public class SampleJob extends Job {
             c = DriverManager.getConnection(url, "CDB_READ_CHEMBL", "readonly");
             pstmt = c.prepareStatement("SELECT * from CDB.CITATIONS where source = 'MED'");
 
-            //pstmt.setMaxRows(100000);
+            //Set an arbitrary limit
+            int total = 1000000;
+            pstmt.setMaxRows(total);
+
             rs = pstmt.executeQuery();
             int counter = 1;
-            int total = 23742757;
+            //int total = 23742757;
 
+            //TODO save more information from the articles
             while (rs.next()) {
                 String title = rs.getString("TITLE_SPECIAL_CHAR");
                 if (title == null) {

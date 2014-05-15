@@ -30,16 +30,16 @@ public class LuceneIndexing extends Job {
         Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_47);
         ShingleAnalyzerWrapper shingleAnalyzer = new ShingleAnalyzerWrapper(analyzer, 2, 3);
 
-        Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/lucene").getRealFile());
+        Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/luceneAbstract").getRealFile());
         IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_47, shingleAnalyzer);
-        config.setRAMBufferSizeMB(64);
+        //config.setRAMBufferSizeMB(64);
         IndexWriter iwriter = new IndexWriter(directory, config);
 
         //Iterate over the citations by packs of 1000
         //The total number as now is: 23772097
-        //long totalCitations = Citation.count();
-        int totalCitations = 23772097;
+        long totalCitations = Citation.count();
 
+        //int totalCitations = 23772097;
         //Add time information for when the data is fetched from the database        
         for (int i = 0; i < totalCitations; i += STEP) {
 
@@ -56,17 +56,26 @@ public class LuceneIndexing extends Job {
             for (Citation citation : citations) {
 
                 Document doc = new Document();
-//                if (citation.abstractText != null) {
+                String contents = null;
+
+                if (citation.abstractText != null) {
+                    contents += citation.abstractText;
 //                    doc.add(new Field("abstract", citation.abstractText, TextField.TYPE_STORED));
-//                }
+                }
 
                 if (citation.title != null) {
-                    doc.add(new Field("title", citation.title, TextField.TYPE_STORED));
+                    contents += citation.title;
+                    //doc.add(new Field("title", citation.title, TextField.TYPE_STORED));
                 }
+
+                if (contents != null) {
+                    doc.add(new Field("contents", contents, TextField.TYPE_STORED));
+                }
+                
                 doc.add(new Field("date", DateTools.dateToString(citation.created, DateTools.Resolution.MINUTE), TextField.TYPE_STORED));
                 iwriter.addDocument(doc);
             }
-            
+
             stopwatchindex.stop();
             Logger.info("Time to index the documents: " + stopwatchindex.elapsed(TimeUnit.SECONDS));
 

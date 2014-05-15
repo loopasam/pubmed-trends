@@ -99,7 +99,7 @@ public class ComputeTrends extends Job {
             }
 
         }
-
+        Logger.info("Job done.");
     }
 
     private int query(String queryString) throws Exception {

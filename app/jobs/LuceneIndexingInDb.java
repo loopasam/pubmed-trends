@@ -23,19 +23,19 @@ import play.vfs.VirtualFile;
  * @author loopasam
  */
 public class LuceneIndexingInDb extends Job {
-    private static final int FREQ_TRESHOLD = 10;
+    private static final int FREQ_TRESHOLD = 9;
 
     @Override
     public void doJob() throws Exception {
 
         Logger.info("Saving index in DB...");
         
-        Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/lucene").getRealFile());
+        Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/luceneAbstract").getRealFile());
 
         DirectoryReader ireader = DirectoryReader.open(directory);
         //Returns an error is the field does not exists
         //Do the same for abstract (first if possible)
-        Terms terms = SlowCompositeReaderWrapper.wrap(ireader).terms("title");
+        Terms terms = SlowCompositeReaderWrapper.wrap(ireader).terms("contents");
         TermsEnum iterator = terms.iterator(null);
         BytesRef byteRef;
 

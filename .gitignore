@@ -23,6 +23,9 @@ server.pid
 /dist/
 .cache
 lucene/
+luceneAbstract/
+nbproject/
+data/
 
 # Ignore configuration file #
 conf/application.conf
