@@ -35,7 +35,7 @@ public class SimpleIndexJob extends Job {
 
         //Needs to take care of dashes and commas - as now removes everything
         Analyzer analyzer = new CustomStandardAnalyzer(Version.LUCENE_47);
-        ShingleAnalyzerWrapper shingleAnalyzer = new ShingleAnalyzerWrapper(analyzer, 2, 3);
+        ShingleAnalyzerWrapper shingleAnalyzer = new ShingleAnalyzerWrapper(analyzer, 2, 4);
 //        Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_47);
 
         Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/lucene").getRealFile());
@@ -44,7 +44,7 @@ public class SimpleIndexJob extends Job {
 
         String pmid = "23667399";
         String title = "eQTL Mapping Using RNA-seq Data.";
-        String abstractText = "pouet As RNA-seq is replacing gene expression microarrays "
+        String abstractText = "pouet As. RNA-seq is replacing gene expression microarrays "
                 + "to assess genome-wide transcription abundance, gene "
                 + "expression Quantitative Trait Locus (eQTL) studies using "
                 + "RNA-seq have emerged. RNA-seq delivers two novel features "

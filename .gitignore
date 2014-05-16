@@ -25,7 +25,7 @@ server.pid
 lucene/
 luceneAbstract/
 nbproject/
-data/
+data/NCITNCBO.owl
 
 # Ignore configuration file #
 conf/application.conf

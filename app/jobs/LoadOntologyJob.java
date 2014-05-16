@@ -24,6 +24,7 @@ import play.Logger;
 import play.jobs.Job;
 import play.libs.WS;
 import uk.ac.ebi.brain.core.Brain;
+import utils.CustomStandardAnalyzer;
 
 /**
  *
@@ -61,7 +62,7 @@ public class LoadOntologyJob extends Job {
                 counter++;
                 Logger.info("branch: " + countertop + "/" + totaltop + " - i: " + counter + "/" + total);
 
-                int lengthTerm = getLength(brain.getLabel(topClass));
+                int lengthTerm = getLength(brain.getLabel(subclass));
 
                 new OntologyTerm(brain.getLabel(subclass), subclass, branch, lengthTerm).save();
                 if (counter % 500 == 0) {
@@ -78,6 +79,10 @@ public class LoadOntologyJob extends Job {
     }
 
     private int getLength(String label) throws IOException {
+        if (label.contains("/")) {
+            return 0;
+        }
+
         Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_47);
         List<String> result = new ArrayList<String>();
         TokenStream stream = analyzer.tokenStream(null, new StringReader(label));
@@ -85,7 +90,23 @@ public class LoadOntologyJob extends Job {
         while (stream.incrementToken()) {
             result.add(stream.getAttribute(CharTermAttribute.class).toString());
         }
-        return result.size();
+        int withoutstopwords = result.size();
+
+        Analyzer customanalyzer = new CustomStandardAnalyzer(Version.LUCENE_47);
+        List<String> resultStop = new ArrayList<String>();
+        TokenStream customstream = customanalyzer.tokenStream(null, new StringReader(label));
+        customstream.reset();
+        while (customstream.incrementToken()) {
+            resultStop.add(customstream.getAttribute(CharTermAttribute.class).toString());
+        }
+        int withstopwords = resultStop.size();
+
+        if (withstopwords != withoutstopwords) {
+            return 0;
+        } else {
+            return withoutstopwords;
+        }
+
     }
 
 }
