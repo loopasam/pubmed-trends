@@ -19,7 +19,7 @@ import play.vfs.VirtualFile;
 
 public class LuceneIndexing extends Job {
 
-    private final static int STEP = 10000;
+    private final static int STEP = 100000;
 
     @Override
     public void doJob() throws Exception {
@@ -41,7 +41,7 @@ public class LuceneIndexing extends Job {
 
         int totalCitations = 23772097;
         //Add time information for when the data is fetched from the database        
-        for (int i = 0; i < 20000; i += STEP) {
+        for (int i = 0; i < totalCitations; i += STEP) {
 
             Logger.info("i: " + i + "/" + totalCitations);
             Stopwatch stopwatchdb = Stopwatch.createUnstarted();
