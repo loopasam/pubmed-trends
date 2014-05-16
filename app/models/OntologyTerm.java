@@ -18,10 +18,12 @@ public class OntologyTerm extends Model {
     public String value;
 
     public String termId;
-    
+
     public String branch;
-    
+
     public int length;
+
+    public int frequency;
 
     public OntologyTerm(String value, String termId, String branch, int length) {
         this.value = value;
@@ -29,4 +31,10 @@ public class OntologyTerm extends Model {
         this.branch = branch;
         this.length = length;
     }
+
+    public void updateFrequency(int frequency) {
+        this.frequency = frequency;
+        this.save();
+    }
+
 }

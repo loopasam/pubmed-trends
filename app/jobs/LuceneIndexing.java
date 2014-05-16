@@ -56,7 +56,7 @@ public class LuceneIndexing extends Job {
             for (Citation citation : citations) {
 
                 Document doc = new Document();
-                String contents = null;
+                String contents = "";
 
                 if (citation.abstractText != null) {
                     contents += citation.abstractText;
@@ -68,7 +68,7 @@ public class LuceneIndexing extends Job {
                     //doc.add(new Field("title", citation.title, TextField.TYPE_STORED));
                 }
 
-                if (contents != null) {
+                if (!contents.equals("")) {
                     doc.add(new Field("contents", contents, TextField.TYPE_STORED));
                 }
                 
@@ -78,7 +78,7 @@ public class LuceneIndexing extends Job {
 
             stopwatchindex.stop();
             Logger.info("Time to index the documents: " + stopwatchindex.elapsed(TimeUnit.SECONDS));
-
+            
         }
 
         iwriter.close();

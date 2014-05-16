@@ -7,9 +7,12 @@ package jobs;
 
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import models.OntologyTerm;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -19,6 +22,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
@@ -34,18 +38,50 @@ public class TokeniseJob extends Job {
 
     @Override
     public void doJob() throws Exception {
+        Logger.info("Job started");
 
-        //National Cancer Institute Thesaurus
-        //BioAssay Ontology
+        List<OntologyTerm> terms = OntologyTerm.findAll();
+        int total = terms.size();
+        int counter = 0;
+        Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/luceneAbstract").getRealFile());
+        DirectoryReader ireader = DirectoryReader.open(directory);
+
         Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_47);
-        List<String> result = new ArrayList<String>();
-        TokenStream stream = analyzer.tokenStream(null, new StringReader("Cyclophosphamide/Prednisone/Vincristine/Zorubicin"));
-        stream.reset();
-        while (stream.incrementToken()) {
-            result.add(stream.getAttribute(CharTermAttribute.class).toString());
+        IndexSearcher isearcher = new IndexSearcher(ireader);
+        QueryParser parser = new QueryParser(Version.LUCENE_47, "contents", analyzer);
+
+        Map<Long, Integer> freqs = new HashMap<Long, Integer>();
+
+        for (OntologyTerm ontologyTerm : terms) {
+            counter++;
+            Logger.info("i: " + counter + "/" + total);
+
+            if (!ontologyTerm.value.contains("/")) {
+
+                Query query = parser.parse("\"" + ontologyTerm.value + "\"");
+                ScoreDoc[] hits = isearcher.search(query, null, 1000).scoreDocs;
+                freqs.put(ontologyTerm.id, hits.length);
+                Logger.info("Query: " + ontologyTerm.value + " - " + hits.length);
+            }
+
         }
 
-        Logger.info(result.toString());
+        counter = 0;
+        for (Long id : freqs.keySet()) {
+            counter++;
+            OntologyTerm term = OntologyTerm.findById(id);
+            Logger.info("i save: " + counter);
+            int freq = freqs.get(id);
+            term.updateFrequency(freq);
+
+            if (counter % 50 == 0) {
+                OntologyTerm.em().flush();
+                OntologyTerm.em().clear();
+            }
+
+        }
+
+        Logger.info("Job finished");
 
     }
 
