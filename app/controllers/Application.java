@@ -1,5 +1,6 @@
 package controllers;
 
+import jobs.ComputeIndexDistribution;
 import jobs.ComputeTrends;
 import jobs.DumpIndex;
 import jobs.LoadOntologyJob;
@@ -26,6 +27,11 @@ public class Application extends Controller {
 
     public static void loadontologies() {
         new LoadOntologyJob().now();
+        index();
+    }
+
+    public static void computeIndexDistribution() {
+        new ComputeIndexDistribution().now();
         index();
     }
 
