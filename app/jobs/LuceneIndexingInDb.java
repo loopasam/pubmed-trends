@@ -23,7 +23,9 @@ import play.vfs.VirtualFile;
  * @author loopasam
  */
 public class LuceneIndexingInDb extends Job {
-    private static final int FREQ_TRESHOLD = 0;
+    //Defined from analysis over term frequency distribution
+    //Limits to just under 10'000'000
+    private static final int FREQ_TRESHOLD = 19;
 
     @Override
     public void doJob() throws Exception {
