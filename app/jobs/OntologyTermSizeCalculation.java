@@ -14,6 +14,7 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.util.Version;
+import play.Logger;
 import play.jobs.Job;
 
 /**
@@ -25,10 +26,12 @@ public class OntologyTermSizeCalculation extends Job {
     @Override
     public void doJob() throws Exception {
 
+        Logger.info("Job started...");
+
         List<OntologyTerm> terms = OntologyTerm.findAll();
-        
+
         for (OntologyTerm ontologyTerm : terms) {
-            
+
             Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_47);
             List<String> result = new ArrayList<String>();
             TokenStream stream = analyzer.tokenStream(null, new StringReader(ontologyTerm.value));
@@ -37,8 +40,10 @@ public class OntologyTermSizeCalculation extends Job {
                 result.add(stream.getAttribute(CharTermAttribute.class).toString());
             }
             ontologyTerm.length = result.size();
+            Logger.info("Term: " + ontologyTerm.value + " - length: " + result.size());
             ontologyTerm.save();
         }
+        Logger.info("Job done");
 
     }
 

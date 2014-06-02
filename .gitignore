@@ -26,6 +26,7 @@ lucene/
 luceneAbstract/
 nbproject/
 data/NCITNCBO.owl
+eclipse/
 
 # Ignore configuration file #
 conf/application.conf

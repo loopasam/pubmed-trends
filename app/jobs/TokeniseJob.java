@@ -38,6 +38,7 @@ public class TokeniseJob extends Job {
 
     @Override
     public void doJob() throws Exception {
+        
         Logger.info("Job started");
 
         List<OntologyTerm> terms = OntologyTerm.findAll();
@@ -59,14 +60,14 @@ public class TokeniseJob extends Job {
             if (!ontologyTerm.value.contains("/")) {
 
                 Query query = parser.parse("\"" + ontologyTerm.value + "\"");
-                ScoreDoc[] hits = isearcher.search(query, null, 1000).scoreDocs;
+                ScoreDoc[] hits = isearcher.search(query, null, 100000).scoreDocs;
                 freqs.put(ontologyTerm.id, hits.length);
                 Logger.info("Query: " + ontologyTerm.value + " - " + hits.length);
             }
 
         }
 
-        counter = 0;
+        counter = 50;
         for (Long id : freqs.keySet()) {
             counter++;
             OntologyTerm term = OntologyTerm.findById(id);
