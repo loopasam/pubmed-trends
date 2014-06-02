@@ -1,0 +1,27 @@
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse"
+                    data-target=".navbar-collapse">
+                <span class="icon-bar"></span> <span class="icon-bar"></span> <span
+                    class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="@{Application.index()}"><span
+                    class="fa fa-flask"></span> Biomedical Literature Trends</a>
+        </div>
+
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li class="${menu == 'home' ? 'active' : ''}"><a
+                        href="@{Application.index()}"><span class="fa fa-home"></span>
+                        Home</a></li>
+                <li class="${menu == 'curation' ? 'active' : ''}"><a
+                        href="#"><span class="fa fa-eye"></span>
+                        Concepts</a></li>
+                <li class="${menu == 'starred' ? 'active' : ''}"><a
+                        href="#"><span class="fa fa-star"></span>
+                        Trends</a></li>
+            </ul>
+        </div>
+    </div>
+</div>

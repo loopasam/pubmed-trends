@@ -25,6 +25,8 @@ public class OntologyTermSizeCalculation extends Job {
 
     @Override
     public void doJob() throws Exception {
+        
+        //Time it takes: started 12pm
 
         Logger.info("Job started...");
 
