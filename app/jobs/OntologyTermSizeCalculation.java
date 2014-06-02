@@ -29,6 +29,8 @@ public class OntologyTermSizeCalculation extends Job {
         Logger.info("Job started...");
 
         List<OntologyTerm> terms = OntologyTerm.findAll();
+        int total = terms.size();
+        int counter = 0;
 
         for (OntologyTerm ontologyTerm : terms) {
 
@@ -40,7 +42,8 @@ public class OntologyTermSizeCalculation extends Job {
                 result.add(stream.getAttribute(CharTermAttribute.class).toString());
             }
             ontologyTerm.length = result.size();
-            Logger.info("Term: " + ontologyTerm.value + " - length: " + result.size());
+            counter++;
+            Logger.info("Term (" + counter + "/" + total + "): " + ontologyTerm.value + " - length: " + result.size());
             ontologyTerm.save();
         }
         Logger.info("Job done");
