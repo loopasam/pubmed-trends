@@ -8,7 +8,6 @@ import jobs.LuceneIndexing;
 import jobs.LuceneIndexingInDb;
 import jobs.LuceneQuery;
 import jobs.NewConceptIdentifier;
-import jobs.OntologyTermSizeCalculation;
 import jobs.SampleJob;
 import jobs.SimpleIndexJob;
 import jobs.TokeniseJob;
@@ -32,11 +31,6 @@ public class Application extends Controller {
 
     public static void computeIndexDistribution() {
         new ComputeIndexDistribution().now();
-        index();
-    }
-
-    public static void computeLength() {
-        new OntologyTermSizeCalculation().now();
         index();
     }
 

@@ -39,7 +39,7 @@ public class LoadOntologyJob extends Job {
         Brain brain = new Brain();
         Logger.info("Learning...");
         brain.learn("data/NCITNCBO.owl");
-        Logger.info("learnt");
+        Logger.info("ontology loaded...");
         //Get the first branches
         List<String> topClasses = brain.getSubClasses("Thing", true);
 
@@ -54,17 +54,24 @@ public class LoadOntologyJob extends Job {
             int total = subclasses.size();
             int counter = 0;
             String branch = topClass;
-            int length = getLength(brain.getLabel(topClass));
+            String label = brain.getLabel(topClass);
 
-            new OntologyTerm(brain.getLabel(topClass), topClass, branch, length).save();
+            int totalLength = getTotalLength(label);
+            int stopWordLength = getLengthWithoutStopWords(label);
+
+            new OntologyTerm(label, topClass, branch, totalLength, stopWordLength).save();
 
             for (String subclass : subclasses) {
                 counter++;
                 Logger.info("branch: " + countertop + "/" + totaltop + " - i: " + counter + "/" + total);
 
-                int lengthTerm = getLength(brain.getLabel(subclass));
-
-                new OntologyTerm(brain.getLabel(subclass), subclass, branch, lengthTerm).save();
+                
+                String subLabel = brain.getLabel(subclass);
+                totalLength = getTotalLength(subLabel);
+                stopWordLength = getLengthWithoutStopWords(subLabel);
+                
+                new OntologyTerm(subLabel, subclass, branch, totalLength, stopWordLength).save();
+                
                 if (counter % 500 == 0) {
                     OntologyTerm.em().flush();
                     OntologyTerm.em().clear();
@@ -78,20 +85,9 @@ public class LoadOntologyJob extends Job {
         Logger.info("Job finished");
     }
 
-    private int getLength(String label) throws IOException {
-        if (label.contains("/")) {
-            return 0;
-        }
-
-        Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_47);
-        List<String> result = new ArrayList<String>();
-        TokenStream stream = analyzer.tokenStream(null, new StringReader(label));
-        stream.reset();
-        while (stream.incrementToken()) {
-            result.add(stream.getAttribute(CharTermAttribute.class).toString());
-        }
-        int withoutstopwords = result.size();
-
+    //Returns the total length of the concept, not considering stop words
+    private int getTotalLength(String label) throws IOException {
+        //Analyzer doesn't remomve stop words
         Analyzer customanalyzer = new CustomStandardAnalyzer(Version.LUCENE_47);
         List<String> resultStop = new ArrayList<String>();
         TokenStream customstream = customanalyzer.tokenStream(null, new StringReader(label));
@@ -99,14 +95,19 @@ public class LoadOntologyJob extends Job {
         while (customstream.incrementToken()) {
             resultStop.add(customstream.getAttribute(CharTermAttribute.class).toString());
         }
-        int withstopwords = resultStop.size();
+        return resultStop.size();
+    }
 
-        if (withstopwords != withoutstopwords) {
-            return 0;
-        } else {
-            return withoutstopwords;
+    //Returns the length of the concept after stop words have been removed
+    private int getLengthWithoutStopWords(String label) throws IOException {
+        Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_47);
+        List<String> result = new ArrayList<String>();
+        TokenStream stream = analyzer.tokenStream(null, new StringReader(label));
+        stream.reset();
+        while (stream.incrementToken()) {
+            result.add(stream.getAttribute(CharTermAttribute.class).toString());
         }
-
+        return result.size();
     }
 
 }

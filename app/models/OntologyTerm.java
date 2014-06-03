@@ -21,15 +21,18 @@ public class OntologyTerm extends Model {
 
     public String branch;
 
-    public int length;
+    public int totalLength;
+    
+    public int lengthWithoutStopWords;
 
     public int frequency;
 
-    public OntologyTerm(String value, String termId, String branch, int length) {
+    public OntologyTerm(String value, String termId, String branch, int totalLength, int lengthWithoutStopWords) {
         this.value = value;
         this.termId = termId;
         this.branch = branch;
-        this.length = length;
+        this.totalLength = totalLength;
+        this.lengthWithoutStopWords = lengthWithoutStopWords;
     }
 
     public void updateFrequency(int frequency) {

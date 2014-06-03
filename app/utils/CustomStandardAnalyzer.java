@@ -37,6 +37,7 @@ public class CustomStandardAnalyzer extends StopwordAnalyzerBase {
         super(matchVersion, stopWords);
     }
 
+    //No stop word removing - just convert into lower case and tokenise
     @Override
     protected TokenStreamComponents createComponents(String fieldName, Reader reader) {
         //http://lucene.apache.org/core/4_0_0/analyzers-common/org/apache/lucene/analysis/standard/StandardTokenizer.html
