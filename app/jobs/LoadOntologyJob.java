@@ -27,7 +27,8 @@ import uk.ac.ebi.brain.core.Brain;
 import utils.CustomStandardAnalyzer;
 
 /**
- *
+ *Loads the NCIT ontology, and computes the length of the entries
+ * in the same time. The job is fast, less than 5 minutes.
  * @author loopasam
  */
 public class LoadOntologyJob extends Job {

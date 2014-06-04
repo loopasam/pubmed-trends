@@ -21,8 +21,11 @@ public class OntologyTerm extends Model {
 
     public String branch;
 
+    //Total length of the phrase
     public int totalLength;
     
+    //Length when stop words have been removed. If different than total length,
+    //it means that stop words are present in the entry.
     public int lengthWithoutStopWords;
 
     public int frequency;
