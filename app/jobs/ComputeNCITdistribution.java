@@ -34,11 +34,11 @@ import play.vfs.VirtualFile;
  *
  * @author loopasam
  */
-public class TokeniseJob extends Job {
+public class ComputeNCITdistribution extends Job {
 
     @Override
     public void doJob() throws Exception {
-        
+
         Logger.info("Job started");
 
         List<OntologyTerm> terms = OntologyTerm.findAll();
@@ -56,15 +56,10 @@ public class TokeniseJob extends Job {
         for (OntologyTerm ontologyTerm : terms) {
             counter++;
             Logger.info("i: " + counter + "/" + total);
-
-            if (!ontologyTerm.value.contains("/")) {
-
-                Query query = parser.parse("\"" + ontologyTerm.value + "\"");
-                ScoreDoc[] hits = isearcher.search(query, null, 100000).scoreDocs;
-                freqs.put(ontologyTerm.id, hits.length);
-                Logger.info("Query: " + ontologyTerm.value + " - " + hits.length);
-            }
-
+            Query query = parser.parse("\"" + ontologyTerm.value + "\"");
+            ScoreDoc[] hits = isearcher.search(query, null, 100000000).scoreDocs;
+            freqs.put(ontologyTerm.id, hits.length);
+            Logger.info("Query: " + ontologyTerm.value + " - " + hits.length);
         }
 
         counter = 50;

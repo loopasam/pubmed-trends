@@ -15,4 +15,4 @@ FROM OntologyTerm
 WHERE lengthWithoutStopWords != totalLength 
 GROUP BY totalLength ORDER BY totalLength;
 ```
-- `distribution-frequency-in-corpus-all-shingles.csv`: 
+- `distribution-frequency-in-corpus-all-shingles.csv`: distribution of number of documents containing a shingle. Usefull to know how often words are used and to set-up a treshold value.

@@ -7,16 +7,15 @@ import jobs.LoadOntologyJob;
 import jobs.LuceneIndexing;
 import jobs.LuceneIndexingInDb;
 import jobs.LuceneQuery;
-import jobs.NewConceptIdentifier;
 import jobs.SampleJob;
 import jobs.SimpleIndexJob;
-import jobs.TokeniseJob;
+import jobs.ComputeNCITdistribution;
 import play.mvc.*;
 
 public class Application extends Controller {
 
-    public static void tokenisejob() {
-        new TokeniseJob().now();
+    public static void conceptDistribution() {
+        new ComputeNCITdistribution().now();
         index();
     }
 
@@ -66,11 +65,6 @@ public class Application extends Controller {
 
     public static void computeTrends() {
         new ComputeTrends().now();
-        index();
-    }
-
-    public static void computeNewConcepts() {
-        new NewConceptIdentifier().now();
         index();
     }
 
