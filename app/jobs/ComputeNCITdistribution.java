@@ -29,9 +29,11 @@ import org.apache.lucene.util.Version;
 import play.Logger;
 import play.jobs.Job;
 import play.vfs.VirtualFile;
+import utils.CustomStandardAnalyzer;
 
 /**
- *
+ *Iterates over the concepts of the NCIT and searches for the number of documents
+ * indexed.
  * @author loopasam
  */
 public class ComputeNCITdistribution extends Job {
@@ -47,7 +49,8 @@ public class ComputeNCITdistribution extends Job {
         Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/luceneAbstract").getRealFile());
         DirectoryReader ireader = DirectoryReader.open(directory);
 
-        Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_47);
+        //Just chunck the words - no stop word removal - such concept will not give any result in principle
+        Analyzer analyzer = new CustomStandardAnalyzer(Version.LUCENE_47);
         IndexSearcher isearcher = new IndexSearcher(ireader);
         QueryParser parser = new QueryParser(Version.LUCENE_47, "contents", analyzer);
 
@@ -57,7 +60,7 @@ public class ComputeNCITdistribution extends Job {
             counter++;
             Logger.info("i: " + counter + "/" + total);
             Query query = parser.parse("\"" + ontologyTerm.value + "\"");
-            ScoreDoc[] hits = isearcher.search(query, null, 100000000).scoreDocs;
+            ScoreDoc[] hits = isearcher.search(query, null, 1000000000).scoreDocs;
             freqs.put(ontologyTerm.id, hits.length);
             Logger.info("Query: " + ontologyTerm.value + " - " + hits.length);
         }
