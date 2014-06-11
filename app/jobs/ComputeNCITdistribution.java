@@ -49,7 +49,9 @@ public class ComputeNCITdistribution extends Job {
         Stopwatch stopwatch = Stopwatch.createUnstarted();
         stopwatch.start();
 
-        List<OntologyTerm> terms = OntologyTerm.findAll();
+        List<OntologyTerm> fullterms = OntologyTerm.findAll();
+        List<OntologyTerm> terms = fullterms.subList(0, 1000);
+        
         int total = terms.size();
         int counter = 0;
         Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/luceneAbstract").getRealFile());
@@ -67,7 +69,7 @@ public class ComputeNCITdistribution extends Job {
             Stopwatch timeQuery = Stopwatch.createUnstarted();
             timeQuery.start();
             Query query = parser.parse("\"" + ontologyTerm.value + "\"");
-            ScoreDoc[] hits = isearcher.search(query, null, 1000000000).scoreDocs;
+            ScoreDoc[] hits = isearcher.search(query, null, 100000000).scoreDocs;
             timeQuery.stop();
             Logger.info("Query time: " + timeQuery.elapsed(TimeUnit.MILLISECONDS));
 

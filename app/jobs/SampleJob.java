@@ -16,6 +16,17 @@ public class SampleJob extends Job {
     public void doJob() {
         Logger.info("Getting data...");
 
+        //Does an iteration to get the citations
+        //SELECT TITLE_SPECIAL_CHAR, TITLE, ABSTRACT, ABSTRACT_LONG, EXTERNAL_ID, CREATED, ISO_ABBREVIATION, CITATION_COUNT
+//FROM CDB.CITATIONS c, CDB.JOURNAL_ISSUES ji, CDB.CV_JOURNALS j, CDB.CN_METRICS m
+//WHERE source = 'MED'
+//AND c.JOURNAL_ISSUE_ID = ji.ID 
+//AND ji.JOURNAL_ID = j.ID
+//AND m.CITATION_ID = c.ID;
+        
+        //Does an iteration to save journal related information
+        //SELECT JOURNALTITLE, ISSN, ISO_ABBREVIATION FROM CDB.CV_JOURNALS;
+        
         Fixtures.delete(Citation.class);
 
         Connection c = null;
@@ -26,6 +37,7 @@ public class SampleJob extends Job {
             String url = "jdbc:oracle:thin:@ora-vm5-015.ebi.ac.uk:1551:LITPUB";
             Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();
             c = DriverManager.getConnection(url, "CDB_READ_CHEMBL", "readonly");
+
             pstmt = c.prepareStatement("SELECT * from CDB.CITATIONS where source = 'MED'");
 
             //Set an arbitrary limit

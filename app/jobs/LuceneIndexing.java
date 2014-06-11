@@ -19,7 +19,7 @@ import play.vfs.VirtualFile;
 
 public class LuceneIndexing extends Job {
 
-    private final static int STEP = 100000;
+    private final static int STEP = 10000;
 
     @Override
     public void doJob() throws Exception {
@@ -39,7 +39,9 @@ public class LuceneIndexing extends Job {
         //The total number as now is: 23772097
         //long totalCitations = Citation.count();
 
-        int totalCitations = 23772097;
+        int totalCitations = 100000;
+//        int totalCitations = 23772097;
+        
         //Add time information for when the data is fetched from the database        
         for (int i = 0; i < totalCitations; i += STEP) {
 

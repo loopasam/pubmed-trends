@@ -23,15 +23,17 @@ import play.vfs.VirtualFile;
  * @author loopasam
  */
 public class LuceneIndexingInDb extends Job {
+
     //Defined from analysis over term frequency distribution
     //Limits to just under 2'000'000
-    private static final int FREQ_TRESHOLD = 99;
+
+    private static final int FREQ_TRESHOLD = 15;
 
     @Override
     public void doJob() throws Exception {
 
         Logger.info("Saving index in DB...");
-        
+
         Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/luceneAbstract").getRealFile());
 
         DirectoryReader ireader = DirectoryReader.open(directory);
@@ -52,6 +54,7 @@ public class LuceneIndexingInDb extends Job {
             //check if exists alread, if yes increase the counter, otherwise create
             //Saves only the terms with high frequency
             //Removes the terms with a _ (from shigle index) and 4 decimals (dates)
+            
             if (frequency > FREQ_TRESHOLD && !term.contains("_") && !term.matches(".*\\d{4}.*")) {
                 new Phrase(term, frequency).save();
                 Logger.info("Term: " + term + " - freq: " + frequency);

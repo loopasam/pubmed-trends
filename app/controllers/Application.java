@@ -1,15 +1,16 @@
 package controllers;
 
 import jobs.ComputeIndexDistribution;
+import jobs.ComputeNCITdistribution;
 import jobs.ComputeTrends;
 import jobs.DumpIndex;
 import jobs.LoadOntologyJob;
 import jobs.LuceneIndexing;
 import jobs.LuceneIndexingInDb;
 import jobs.LuceneQuery;
+import jobs.LuceneStartifiedIndexing;
 import jobs.SampleJob;
 import jobs.SimpleIndexJob;
-import jobs.ComputeNCITdistribution;
 import play.mvc.*;
 
 public class Application extends Controller {
@@ -21,6 +22,11 @@ public class Application extends Controller {
 
     public static void index() {
         render();
+    }
+
+    public static void stratifiedIndex() {
+        new LuceneStartifiedIndexing().now();
+        index();
     }
 
     public static void loadontologies() {
