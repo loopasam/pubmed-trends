@@ -5,10 +5,12 @@
  */
 package jobs;
 
+import com.google.common.base.Stopwatch;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import models.Phrase;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -62,9 +64,12 @@ public class ComputeTrends extends Job {
         Map<Long, Double> trends = new HashMap<Long, Double>();
 
         for (Phrase phrase : phrases) {
+
+            Stopwatch time = Stopwatch.createUnstarted();
+            time.start();
+
 //        for (int i = 0; i < 1000; i++) {
 //            Phrase phrase = phrases.get(i);
-
             counter++;
             Logger.info("i: " + counter + "/" + total);
 
@@ -91,6 +96,10 @@ public class ComputeTrends extends Job {
                 Logger.info("Trend: " + trend5years);
                 trends.put(phrase.id, trend5years);
             }
+            
+            time.stop();
+            Logger.info("Computation time on trend: " + time.elapsed(TimeUnit.MILLISECONDS));
+
         }
 
         ireader.close();

@@ -49,8 +49,8 @@ public class ComputeNCITdistribution extends Job {
         Stopwatch stopwatch = Stopwatch.createUnstarted();
         stopwatch.start();
 
-        List<OntologyTerm> fullterms = OntologyTerm.findAll();
-        List<OntologyTerm> terms = fullterms.subList(0, 1000);
+        List<OntologyTerm> terms = OntologyTerm.findAll();
+//        List<OntologyTerm> terms = fullterms.subList(0, 1000);
         
         int total = terms.size();
         int counter = 0;
