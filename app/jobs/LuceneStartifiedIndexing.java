@@ -27,6 +27,7 @@ import org.apache.lucene.util.Version;
 import play.Logger;
 import play.jobs.Job;
 import play.vfs.VirtualFile;
+import utils.Utils;
 
 /**
  * Prepare multiple indexes to perform the trend computation faster afterwards.
@@ -38,6 +39,8 @@ public class LuceneStartifiedIndexing extends Job {
     @Override
     public void doJob() throws Exception {
         Logger.info("Stratified indexing started...");
+        Stopwatch stopwatch = Stopwatch.createUnstarted();
+        stopwatch.start();
 
         Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_47);
         ShingleAnalyzerWrapper shingleAnalyzer = new ShingleAnalyzerWrapper(analyzer, 2, 5);
@@ -87,5 +90,8 @@ public class LuceneStartifiedIndexing extends Job {
 
         }
         Logger.info("Job done!");
+        stopwatch.stop();
+        Utils.emailAdmin("Stratified index built", "Job finished in " + stopwatch.elapsed(TimeUnit.MINUTES) + " minutes.");
+
     }
 }
