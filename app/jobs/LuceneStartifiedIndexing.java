@@ -47,6 +47,7 @@ public class LuceneStartifiedIndexing extends Job {
         int now = Integer.parseInt((String) play.Play.configuration.get("analysis.year"));
 
         //TODO could possibly do less indexes
+        //Just focus on the previous year for simplicity sake
         for (int t = now; t >= now - 10; t--) {
             //Create a folder for the index
             VirtualFile.fromRelativePath("/indexes/index-" + t).getRealFile().mkdir();

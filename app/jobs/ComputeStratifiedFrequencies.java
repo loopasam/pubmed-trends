@@ -26,6 +26,7 @@ import org.apache.lucene.util.Version;
 import play.Logger;
 import play.jobs.Job;
 import play.vfs.VirtualFile;
+import utils.Utils;
 
 /**
  *
@@ -33,23 +34,24 @@ import play.vfs.VirtualFile;
  */
 public class ComputeStratifiedFrequencies extends Job {
 
-    IndexSearcher isearcher5y;
+    IndexSearcher isearcher;
     QueryParser parser;
 
     @Override
     public void doJob() throws Exception {
-        Logger.info("trends computation started...");
+        Logger.info("Frequency computation started...");
+        Stopwatch stopwatch = Stopwatch.createUnstarted();
+        stopwatch.start();
 
         int now = Integer.parseInt((String) play.Play.configuration.get("analysis.year"));
-//        int y1 = now - 1;
-        int y5 = now - 5;
+        int y1 = now - 1;
 
         Logger.info("Reading index...");
-        Directory directory5y = FSDirectory.open(VirtualFile.fromRelativePath("/indexes/index-" + y5).getRealFile());
-        DirectoryReader ireader5y = DirectoryReader.open(directory5y);
-        Analyzer analyzer5y = new StandardAnalyzer(Version.LUCENE_47);
-        this.isearcher5y = new IndexSearcher(ireader5y);
-        this.parser = new QueryParser(Version.LUCENE_47, "contents", analyzer5y);
+        Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/indexes/index-" + y1).getRealFile());
+        DirectoryReader ireader = DirectoryReader.open(directory);
+        Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_47);
+        this.isearcher = new IndexSearcher(ireader);
+        this.parser = new QueryParser(Version.LUCENE_47, "contents", analyzer);
 
         //Retrieve all the phrases in the database, and compute
         Logger.info("Retrieving phrases...");
@@ -57,7 +59,7 @@ public class ComputeStratifiedFrequencies extends Job {
         int total = phrases.size();
         int counter = 0;
 
-        Map<Long, Double> frequencies5y = new HashMap<Long, Double>();
+        Map<Long, Double> frequencies = new HashMap<Long, Double>();
 
         for (Phrase phrase : phrases) {
 
@@ -65,28 +67,28 @@ public class ComputeStratifiedFrequencies extends Job {
             time.start();
             counter++;
             Logger.info("i: " + counter + "/" + total + " (" + phrase.value + ")");
-            int frequency5y = query(phrase.value);
+            int frequency = query(phrase.value);
             time.stop();
             Logger.info("- Query time: " + time.elapsed(TimeUnit.MILLISECONDS));
-            frequencies5y.put(phrase.id, (double) frequency5y);
+            frequencies.put(phrase.id, (double) frequency);
         }
 
-        ireader5y.close();
-        directory5y.close();
+        ireader.close();
+        directory.close();
 
         //Batch saving to the database
         Phrase.em().flush();
         Phrase.em().clear();
         counter = 0;
-        for (Long id : frequencies5y.keySet()) {
+        for (Long id : frequencies.keySet()) {
 
             Phrase phrase = Phrase.findById(id);
-            phrase.frequency5y = frequencies5y.get(id);
+            phrase.frequency1y = frequencies.get(id);
             phrase.save();
-            
+
             counter++;
             Logger.info("Counter: " + counter);
-            
+
             if (counter % 1000 == 0) {
                 Phrase.em().flush();
                 Phrase.em().clear();
@@ -94,11 +96,14 @@ public class ComputeStratifiedFrequencies extends Job {
         }
 
         Logger.info("Job done.");
+        stopwatch.stop();
+        Utils.emailAdmin("Stratified index built", "Job finished in " + stopwatch.elapsed(TimeUnit.MINUTES) + " minutes.");
+
     }
 
     private int query(String queryString) throws Exception {
         Query query = this.parser.parse(queryString);
-        ScoreDoc[] hits = this.isearcher5y.search(query, 10000000).scoreDocs;
+        ScoreDoc[] hits = this.isearcher.search(query, 10000000).scoreDocs;
         int numbers = hits.length;
         return numbers;
     }

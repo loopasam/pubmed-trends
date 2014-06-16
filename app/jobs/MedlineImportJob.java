@@ -31,7 +31,7 @@ public class MedlineImportJob extends Job {
                 + "FROM CDB.CITATIONS c, CDB.JOURNAL_ISSUES ji, CDB.CV_JOURNALS j, CDB.CN_METRICS m "
                 + "WHERE source = 'MED' "
                 + "AND CREATED < '01-JAN-14' "
-                + "AND CREATED > '31-DEC-07' "
+                + "AND CREATED > '31-DEC-10' "
                 + "AND c.JOURNAL_ISSUE_ID = ji.ID "
                 + "AND ji.JOURNAL_ID = j.ID "
                 + "AND m.CITATION_ID = c.ID");
