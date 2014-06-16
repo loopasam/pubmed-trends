@@ -10,7 +10,7 @@ import jobs.LuceneIndexing;
 import jobs.LuceneIndexingInDb;
 import jobs.LuceneQuery;
 import jobs.LuceneStartifiedIndexing;
-import jobs.SampleJob;
+import jobs.MedlineImportJob;
 import jobs.SimpleIndexJob;
 import play.mvc.*;
 
@@ -41,7 +41,7 @@ public class Application extends Controller {
     }
 
     public static void samplePubLit() {
-        new SampleJob().now();
+        new MedlineImportJob().now();
         index();
     }
 
