@@ -83,20 +83,6 @@ public class ComputeNCITdistribution extends Job {
             Logger.info("Query: " + ontologyTerm.value + " - " + hits.length);
         }
 
-//        counter = 50;
-//        for (Long id : freqs.keySet()) {
-//            counter++;
-//            OntologyTerm term = OntologyTerm.findById(id);
-//            Logger.info("i save: " + counter);
-//            int freq = freqs.get(id);
-//            term.updateFrequency(freq);
-//
-//            if (counter % 50 == 0) {
-//                OntologyTerm.em().flush();
-//                OntologyTerm.em().clear();
-//            }
-//
-//        }
         stopwatch.stop();
         Utils.emailAdmin("Distribution completed", "Job finished in " + stopwatch.elapsed(TimeUnit.MINUTES) + " minutes.");
         Logger.info("Job finished");

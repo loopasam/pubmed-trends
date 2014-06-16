@@ -46,6 +46,7 @@ public class LuceneStartifiedIndexing extends Job {
         ShingleAnalyzerWrapper shingleAnalyzer = new ShingleAnalyzerWrapper(analyzer, 2, 5);
         int now = Integer.parseInt((String) play.Play.configuration.get("analysis.year"));
 
+        //TODO could possibly do less indexes
         for (int t = now; t >= now - 10; t--) {
             //Create a folder for the index
             VirtualFile.fromRelativePath("/indexes/index-" + t).getRealFile().mkdir();

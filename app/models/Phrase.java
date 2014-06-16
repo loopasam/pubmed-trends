@@ -20,10 +20,12 @@ public class Phrase extends Model {
     
     public int frequency;
     
-    public double trend5years;
+    //Frequency of documents for t - 5 years
+    public double frequency5y;
     
-    public double volumetricTrend5years;
-    
+    //Frequency of documents for t - 1 year
+    public double frequency1y;
+            
     public int apparitionDate;
 
     public Phrase(String value, int frequency) {
