@@ -64,7 +64,7 @@ public class ComputeStratifiedFrequencies extends Job {
             Stopwatch time = Stopwatch.createUnstarted();
             time.start();
             counter++;
-            Logger.info("i: " + counter + "/" + total);
+            Logger.info("i: " + counter + "/" + total + " (" + phrase.value + ")");
             int frequency5y = query(phrase.value);
             time.stop();
             Logger.info("- Query time: " + time.elapsed(TimeUnit.MILLISECONDS));
