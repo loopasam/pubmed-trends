@@ -37,11 +37,12 @@ public class MedlineImportJob extends Job {
                 + "AND m.CITATION_ID = c.ID");
 
         //Set an arbitrary limit
-//        int total = 100;
-//        pstmt.setMaxRows(total);
+        int total = 100000;
+        pstmt.setMaxRows(total);
         ResultSet rs = pstmt.executeQuery();
         int counter = 1;
-        int total = 7262839;
+        
+//        int total = 7262839;
 
         //TODO save more information from the articles
         while (rs.next()) {
@@ -57,11 +58,15 @@ public class MedlineImportJob extends Job {
             }
             String pmid = rs.getString("EXTERNAL_ID");
             String created = rs.getString("CREATED");
-
+            
+            String journalAbbreviation = rs.getString("ISO_ABBREVIATION");
+            
+            String citationCount = rs.getString("CITATION_COUNT");
+            
             Logger.info("Record (PMID: " + pmid + ") - " + counter + "/" + total);
             counter++;
 
-            new Citation(pmid, title, abstractText, created).save();
+            new Citation(pmid, title, abstractText, created, journalAbbreviation, citationCount).save();
             if (counter % 1000 == 0) {
                 Citation.em().flush();
                 Citation.em().clear();

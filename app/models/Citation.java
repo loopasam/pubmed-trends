@@ -14,7 +14,7 @@ import play.db.jpa.Model;
 @Entity
 public class Citation extends Model {
 
-    public Citation(String pmid, String title, String abstractText, String created) {
+    public Citation(String pmid, String title, String abstractText, String created, String journalAbbreviation, String citationCount) {
 
         if (isEntirelyInBasicMultilingualPlane(abstractText)) {
             this.abstractText = abstractText;
@@ -24,6 +24,8 @@ public class Citation extends Model {
 
         this.pmid = Integer.parseInt(pmid);
         this.title = title;
+        this.journalAbbreviation = journalAbbreviation;
+        this.citationCount = Integer.parseInt(citationCount);
         try {
 
             this.created = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss.S", Locale.ENGLISH).parse(created);
@@ -42,6 +44,10 @@ public class Citation extends Model {
     public String abstractText;
 
     public Date created;
+    
+    public String journalAbbreviation;
+    
+    public int citationCount;
 
     public static boolean isEntirelyInBasicMultilingualPlane(String text) {
         if (text == null) {

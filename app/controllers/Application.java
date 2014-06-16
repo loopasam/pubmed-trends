@@ -11,7 +11,6 @@ import jobs.LuceneIndexingInDb;
 import jobs.LuceneQuery;
 import jobs.LuceneStartifiedIndexing;
 import jobs.MedlineImportJob;
-import jobs.SimpleIndexJob;
 import play.mvc.*;
 
 public class Application extends Controller {
@@ -57,11 +56,6 @@ public class Application extends Controller {
 
     public static void dumpIndex() {
         new DumpIndex().now();
-        index();
-    }
-
-    public static void simpleIndex() {
-        new SimpleIndexJob().now();
         index();
     }
 
