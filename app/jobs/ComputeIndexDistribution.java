@@ -32,7 +32,9 @@ public class ComputeIndexDistribution extends Job {
     public void doJob() throws Exception {
 
         Logger.info("Job started...");
-        Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/luceneAbstract").getRealFile());
+        
+//        Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/luceneAbstract").getRealFile());
+        Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/indexes/index-2013").getRealFile());
         DirectoryReader ireader = DirectoryReader.open(directory);
 
         //Returns an error is the field does not exists
@@ -62,7 +64,8 @@ public class ComputeIndexDistribution extends Job {
             }
         }
 
-        File file = new File("data/distribution-frequency-in-corpus-all-shingles.csv");
+//        File file = new File("data/distribution-frequency-in-corpus-all-shingles.csv");
+        File file = new File("data/distribution-frequency-in-corpus-2013-shingles.csv");
         StringBuilder sb = new StringBuilder();
         for (Integer frequency : distribution.keySet()) {
             sb.append(frequency).append("\t").append(distribution.get(frequency)).append("\n");

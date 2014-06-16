@@ -5,6 +5,8 @@
  */
 package jobs;
 
+import com.google.common.base.Stopwatch;
+import java.util.concurrent.TimeUnit;
 import models.Citation;
 import models.Phrase;
 import org.apache.lucene.index.DirectoryReader;
@@ -17,6 +19,7 @@ import org.apache.lucene.util.BytesRef;
 import play.Logger;
 import play.jobs.Job;
 import play.vfs.VirtualFile;
+import utils.Utils;
 
 /**
  *
@@ -25,14 +28,15 @@ import play.vfs.VirtualFile;
 public class LuceneIndexingInDb extends Job {
 
     //Defined from analysis over term frequency distribution
-    //Limits to just under 2'000'000
-
-    private static final int FREQ_TRESHOLD = 15;
+    //Limits to just under 500'000 terms
+    private static final int FREQ_TRESHOLD = 384;
 
     @Override
     public void doJob() throws Exception {
 
         Logger.info("Saving index in DB...");
+        Stopwatch stopwatch = Stopwatch.createUnstarted();
+        stopwatch.start();
 
         Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/luceneAbstract").getRealFile());
 
@@ -54,7 +58,7 @@ public class LuceneIndexingInDb extends Job {
             //check if exists alread, if yes increase the counter, otherwise create
             //Saves only the terms with high frequency
             //Removes the terms with a _ (from shigle index) and 4 decimals (dates)
-            
+
             if (frequency > FREQ_TRESHOLD && !term.contains("_") && !term.matches(".*\\d{4}.*")) {
                 new Phrase(term, frequency).save();
                 Logger.info("Term: " + term + " - freq: " + frequency);
@@ -66,6 +70,8 @@ public class LuceneIndexingInDb extends Job {
             }
 
         }
+        stopwatch.stop();
+        Utils.emailAdmin("Indexing in DB done. ", "Job finished in " + stopwatch.elapsed(TimeUnit.MINUTES) + " minutes.");
 
         Logger.info("index done and saved.");
     }
