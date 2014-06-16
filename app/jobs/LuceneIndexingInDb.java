@@ -7,7 +7,6 @@ package jobs;
 
 import com.google.common.base.Stopwatch;
 import java.util.concurrent.TimeUnit;
-import models.Citation;
 import models.Phrase;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.SlowCompositeReaderWrapper;
@@ -28,8 +27,8 @@ import utils.Utils;
 public class LuceneIndexingInDb extends Job {
 
     //Defined from analysis over term frequency distribution
-    //Limits to just under 500'000 terms
-    private static final int FREQ_TRESHOLD = 384;
+    //Limits to just under 577'214 terms for the year 2013
+    private static final int FREQ_TRESHOLD = 24;
 
     @Override
     public void doJob() throws Exception {
@@ -38,7 +37,7 @@ public class LuceneIndexingInDb extends Job {
         Stopwatch stopwatch = Stopwatch.createUnstarted();
         stopwatch.start();
 
-        Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/luceneAbstract").getRealFile());
+        Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/indexes/index-2013").getRealFile());
 
         DirectoryReader ireader = DirectoryReader.open(directory);
         //Returns an error is the field does not exists
@@ -59,7 +58,7 @@ public class LuceneIndexingInDb extends Job {
             //Saves only the terms with high frequency
             //Removes the terms with a _ (from shigle index) and 4 decimals (dates)
 
-            if (frequency > FREQ_TRESHOLD && !term.contains("_") && !term.matches(".*\\d{4}.*")) {
+            if (frequency > FREQ_TRESHOLD && !term.contains("_")) {
                 new Phrase(term, frequency).save();
                 Logger.info("Term: " + term + " - freq: " + frequency);
             }
