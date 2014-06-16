@@ -45,6 +45,7 @@ public class ComputeStratifiedFrequencies extends Job {
 
         int now = Integer.parseInt((String) play.Play.configuration.get("analysis.year"));
         int y1 = now - 1;
+        Logger.info("Previous year: " + y1);
 
         Logger.info("Reading index...");
         Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/indexes/index-" + y1).getRealFile());

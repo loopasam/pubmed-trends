@@ -42,7 +42,7 @@ public class MedlineImportJob extends Job {
         ResultSet rs = pstmt.executeQuery();
         int counter = 1;
         
-//        int total = 7262839;
+//        int total = 3244360;
 
         //TODO save more information from the articles
         while (rs.next()) {
@@ -78,7 +78,6 @@ public class MedlineImportJob extends Job {
 
         Logger.info("Job done.");
         counter = 0;
-        total = 33035;
 
         PreparedStatement pstmtJournals = c.prepareStatement("SELECT JOURNALTITLE, ISSN, ISO_ABBREVIATION "
                 + "FROM CDB.CV_JOURNALS");
@@ -93,7 +92,7 @@ public class MedlineImportJob extends Job {
 
             String iso = rsJournals.getString("ISO_ABBREVIATION");
 
-            Logger.info("Journal (" + title + ")");
+            Logger.info("Journal (" + title + "): " + counter);
             counter++;
 
             new Journal(title, issn, iso).save();
