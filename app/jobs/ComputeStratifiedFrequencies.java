@@ -44,16 +44,20 @@ public class ComputeStratifiedFrequencies extends Job {
 //        int y1 = now - 1;
         int y5 = now - 5;
 
+        Logger.info("Reading index...");
         Directory directory5y = FSDirectory.open(VirtualFile.fromRelativePath("/indexes/index-" + y5).getRealFile());
         DirectoryReader ireader5y = DirectoryReader.open(directory5y);
         Analyzer analyzer5y = new StandardAnalyzer(Version.LUCENE_47);
         this.isearcher5y = new IndexSearcher(ireader5y);
         this.parser = new QueryParser(Version.LUCENE_47, "contents", analyzer5y);
 
-        //Retrieve all the phrases in the database, and compute 
+        //Retrieve all the phrases in the database, and compute
+        Logger.info("Retrieving phrases...");
         List<Phrase> phrases = Phrase.findAll();
         int total = phrases.size();
         int counter = 0;
+
+        Map<Long, Double> frequencies5y = new HashMap<Long, Double>();
 
         for (Phrase phrase : phrases) {
 
@@ -64,17 +68,30 @@ public class ComputeStratifiedFrequencies extends Job {
             int frequency5y = query(phrase.value);
             time.stop();
             Logger.info("- Query time: " + time.elapsed(TimeUnit.MILLISECONDS));
-
-            Stopwatch timeSave = Stopwatch.createUnstarted();
-            timeSave.start();
-            phrase.frequency5y = frequency5y;
-            phrase.save();
-            timeSave.stop();
-            Logger.info("- Persistence time: " + timeSave.elapsed(TimeUnit.MILLISECONDS));
+            frequencies5y.put(phrase.id, (double) frequency5y);
         }
 
         ireader5y.close();
         directory5y.close();
+
+        //Batch saving to the database
+        Phrase.em().flush();
+        Phrase.em().clear();
+        counter = 0;
+        for (Long id : frequencies5y.keySet()) {
+
+            Phrase phrase = Phrase.findById(id);
+            phrase.frequency5y = frequencies5y.get(id);
+            phrase.save();
+            
+            counter++;
+            Logger.info("Counter: " + counter);
+            
+            if (counter % 1000 == 0) {
+                Phrase.em().flush();
+                Phrase.em().clear();
+            }
+        }
 
         Logger.info("Job done.");
     }
