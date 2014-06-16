@@ -21,6 +21,8 @@ public class Journal extends Model {
     public String iso;
     
     public String issn;
+    
+    public double openImpactFactor;
 
     public Journal(String title, String iso, String issn) {
         this.title = title;

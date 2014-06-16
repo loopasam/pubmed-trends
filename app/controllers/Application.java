@@ -2,6 +2,7 @@ package controllers;
 
 import jobs.ComputeIndexDistribution;
 import jobs.ComputeNCITdistribution;
+import jobs.ComputeOpenIF;
 import jobs.ComputeStratifiedFrequencies;
 import jobs.ComputeStratifiedFrequencies2;
 import jobs.DumpIndex;
@@ -76,6 +77,11 @@ public class Application extends Controller {
 
     public static void computeStratifiedFrequencies2() {
         new ComputeStratifiedFrequencies2().now();
+        index();
+    }
+
+    public static void computeOpenIF() {
+        new ComputeOpenIF().now();
         index();
     }
 
