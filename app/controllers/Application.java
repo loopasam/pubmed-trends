@@ -3,6 +3,7 @@ package controllers;
 import jobs.ComputeIndexDistribution;
 import jobs.ComputeNCITdistribution;
 import jobs.ComputeStratifiedFrequencies;
+import jobs.ComputeStratifiedFrequencies2;
 import jobs.DumpIndex;
 import jobs.LoadOntologyJob;
 import jobs.LuceneIndexing;
@@ -76,6 +77,11 @@ public class Application extends Controller {
 
     public static void computeStratifiedFrequencies() {
         new ComputeStratifiedFrequencies().now();
+        index();
+    }
+
+    public static void computeStratifiedFrequencies2() {
+        new ComputeStratifiedFrequencies2().now();
         index();
     }
 
