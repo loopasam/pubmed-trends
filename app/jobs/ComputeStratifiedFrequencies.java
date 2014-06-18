@@ -77,9 +77,9 @@ public class ComputeStratifiedFrequencies extends Job {
         ireader.close();
         directory.close();
 
-        //Batch saving to the database
-        Phrase.em().flush();
-        Phrase.em().clear();
+        //Batch saving to the database - could be the bug
+        //Phrase.em().flush();
+        //Phrase.em().clear();
         counter = 0;
         for (Long id : frequencies.keySet()) {
 
