@@ -37,12 +37,12 @@ public class MedlineImportJob extends Job {
                 + "AND m.CITATION_ID = c.ID");
 
         //Set an arbitrary limit
-        int total = 1000000;
-        pstmt.setMaxRows(total);
+        //int total = 1000000;
+        //pstmt.setMaxRows(total);
         ResultSet rs = pstmt.executeQuery();
         int counter = 1;
         
-//        int total = 3244360;
+        int total = 3244360;
 
         //TODO save more information from the articles
         while (rs.next()) {

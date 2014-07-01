@@ -71,30 +71,38 @@ public class ComputeStratifiedFrequencies extends Job {
             int frequency = query(phrase.value);
             time.stop();
             Logger.info("- Query time: " + time.elapsed(TimeUnit.MILLISECONDS));
-            frequencies.put(phrase.id, (double) frequency);
+            
+            Stopwatch save = Stopwatch.createUnstarted();
+            save.start();
+            phrase.frequency1y = frequency;
+            phrase.save();
+            save.stop();
+            Logger.info("- Saving time: " + save.elapsed(TimeUnit.MILLISECONDS));
+            
+            //Try to save it to debug
+            //frequencies.put(phrase.id, (double) frequency);
         }
+
+        //Phrase.em().flush();
+        //Phrase.em().clear();
+//        counter = 0;
+//        for (Long id : frequencies.keySet()) {
+//
+//            Phrase phrase = Phrase.findById(id);
+//            phrase.frequency1y = frequencies.get(id);
+//            phrase.save();
+//
+//            counter++;
+//            Logger.info("Counter: " + counter);
+//
+//            if (counter % 1000 == 0) {
+//                Phrase.em().flush();
+//                Phrase.em().clear();
+//            }
+//        }
 
         ireader.close();
         directory.close();
-
-        //Batch saving to the database - could be the bug
-        //Phrase.em().flush();
-        //Phrase.em().clear();
-        counter = 0;
-        for (Long id : frequencies.keySet()) {
-
-            Phrase phrase = Phrase.findById(id);
-            phrase.frequency1y = frequencies.get(id);
-            phrase.save();
-
-            counter++;
-            Logger.info("Counter: " + counter);
-
-            if (counter % 1000 == 0) {
-                Phrase.em().flush();
-                Phrase.em().clear();
-            }
-        }
 
         Logger.info("Job done.");
         stopwatch.stop();
