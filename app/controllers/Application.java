@@ -1,17 +1,21 @@
 package controllers;
 
 import jobs.ComputeIndexDistribution;
+import jobs.ComputeMorphiaIF;
 import jobs.ComputeNCITdistribution;
 import jobs.ComputeOpenIF;
 import jobs.ComputeStratifiedFrequencies;
 import jobs.ComputeStratifiedFrequencies2;
 import jobs.DumpIndex;
+import jobs.LoadMongoDb;
 import jobs.LoadOntologyJob;
 import jobs.LuceneIndexing;
 import jobs.LuceneIndexingInDb;
 import jobs.LuceneQuery;
 import jobs.LuceneStartifiedIndexing;
 import jobs.MedlineImportJob;
+import models.MorphiaJournal;
+import play.Logger;
 import play.mvc.*;
 
 public class Application extends Controller {
@@ -23,6 +27,21 @@ public class Application extends Controller {
 
     public static void index() {
         render();
+    }
+    
+    public static void computeMorphiaIF() {
+        new ComputeMorphiaIF().now();
+        index();
+    }
+    
+    public static void journal(String issn) {
+        MorphiaJournal journal = MorphiaJournal.find("issn", issn).first();
+        render(journal);
+    }
+    
+    public static void loadMongo() {
+        new LoadMongoDb().now();
+        index();
     }
 
     public static void stratifiedIndex() {

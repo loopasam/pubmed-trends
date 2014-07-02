@@ -6,6 +6,7 @@
 GET     /                                       Application.index
 GET     /query/{query}                                       Application.luceneQuery
 
+GET     /issn/{issn}                                       Application.journal
 
 
 # Ignore favicon requests

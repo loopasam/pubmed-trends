@@ -6,6 +6,7 @@
 </div>
 <ul>
     <li><a href="@{Application.samplePubLit()}">Download data from PUB_LIT</a></li>
+    <li><a href="@{Application.loadMongo()}">Load SQL into MongoDB</a></li>
     <li><a href="@{Application.luceneIndexing()}">Index text</a></li>
     <li><a href="@{Application.luceneQuery("\"authors reply\"")}">Query</a></li>
     <li><a href="@{Application.dumpIndex()}">Dump Index</a></li>
@@ -18,4 +19,5 @@
     <li><a href="@{Application.computeStratifiedFrequencies()}">(R5) Compute the stratified frequencies for all the phrases in the database.</a></li>
     <li><a href="@{Application.computeStratifiedFrequencies2()}">(R5-2) Compute the stratified frequencies, optimised methodology, for all the phrases in the database.</a></li>
     <li><a href="@{Application.computeOpenIF()}">(R6) Compute the Open IF.</a></li>
+    <li><a href="@{Application.computeMorphiaIF()}">Compute morphia Open IF.</a></li>
 </ul>
