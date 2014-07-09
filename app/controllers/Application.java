@@ -1,5 +1,6 @@
 package controllers;
 
+import jobs.BuildIndexJob;
 import jobs.ComputeIndexDistribution;
 import jobs.ComputeMorphiaIF;
 import jobs.ComputeNCITdistribution;
@@ -7,6 +8,7 @@ import jobs.ComputeOpenIF;
 import jobs.ComputeStratifiedFrequencies;
 import jobs.ComputeStratifiedFrequencies2;
 import jobs.DumpIndex;
+import jobs.ImportMedlineJob;
 import jobs.LoadMongoDb;
 import jobs.LoadOntologyJob;
 import jobs.LuceneIndexing;
@@ -45,7 +47,7 @@ public class Application extends Controller {
     }
 
     public static void stratifiedIndex() {
-        new LuceneStartifiedIndexing().now();
+        new BuildIndexJob().now();
         index();
     }
 
@@ -60,7 +62,7 @@ public class Application extends Controller {
     }
 
     public static void samplePubLit() {
-        new MedlineImportJob().now();
+        new ImportMedlineJob().now();
         index();
     }
 

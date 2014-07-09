@@ -6,18 +6,11 @@
 </div>
 <ul>
     <li><a href="@{Application.samplePubLit()}">Download data from PUB_LIT</a></li>
-    <li><a href="@{Application.loadMongo()}">Load SQL into MongoDB</a></li>
-    <li><a href="@{Application.luceneIndexing()}">Index text</a></li>
-    <li><a href="@{Application.luceneQuery("\"authors reply\"")}">Query</a></li>
-    <li><a href="@{Application.dumpIndex()}">Dump Index</a></li>
+    <li><a href="@{Application.stratifiedIndex()}">Compute the stratified index for trend calculation.</a></li>
     <li><a href="@{Application.indexInDb()}">Save the index in the database</a></li>
-    <li><a href="@{Application.computeTrends()}">Compute the trends and save them</a></li>
     <li><a href="@{Application.loadontologies()}">(R1) Load NCIT from local file and compute length of terms</a></li>
     <li><a href="@{Application.computeIndexDistribution()}">(R2) Compute the index distribution of all phrases/concepts before saving</a></li>
     <li><a href="@{Application.conceptDistribution()}">(R3) Compute the distribution and presence of the NCIT concept in the index</a></li>
-    <li><a href="@{Application.stratifiedIndex()}">(R4) Compute the stratified index for trend calculation.</a></li>
     <li><a href="@{Application.computeStratifiedFrequencies()}">(R5) Compute the stratified frequencies for all the phrases in the database.</a></li>
-    <li><a href="@{Application.computeStratifiedFrequencies2()}">(R5-2) Compute the stratified frequencies, optimised methodology, for all the phrases in the database.</a></li>
-    <li><a href="@{Application.computeOpenIF()}">(R6) Compute the Open IF.</a></li>
     <li><a href="@{Application.computeMorphiaIF()}">Compute morphia Open IF.</a></li>
 </ul>

@@ -7,7 +7,10 @@ package models;
 
 import com.google.code.morphia.annotations.Entity;
 import com.google.code.morphia.annotations.Indexed;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import play.modules.morphia.Model;
 
 /**
@@ -17,17 +20,20 @@ import play.modules.morphia.Model;
 @Entity
 public class MorphiaCitation extends Model {
 
-    public MorphiaCitation(int pmid, String title, String abstractText, Date created, String journalAbbreviation, int citationCount) {
+    public MorphiaCitation(String pmid, String title, String abstractText, String created, String journalAbbreviation, String citationCount) throws ParseException {
         this.pmid = pmid;
         this.title = title;
         this.abstractText = abstractText;
-        this.created = created;
         this.journalAbbreviation = journalAbbreviation;
-        this.citationCount = citationCount;
+        if (citationCount == null) {
+            this.citationCount = 0;
+        } else {
+            this.citationCount = Integer.parseInt(citationCount);
+        }
+        this.created = new SimpleDateFormat("yyyy-mm-dd hh:mm:ss.S", Locale.ENGLISH).parse(created);
     }
-    
 
-    public int pmid;
+    public String pmid;
 
     public String title;
 

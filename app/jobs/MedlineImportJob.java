@@ -8,6 +8,7 @@ import play.Logger;
 import play.jobs.Job;
 import play.test.Fixtures;
 
+//TODO to be deleted when switched to MongoDB implementation
 public class MedlineImportJob extends Job {
 
     @Override

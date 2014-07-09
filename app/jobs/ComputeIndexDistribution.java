@@ -8,7 +8,6 @@ package jobs;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import models.Phrase;
 import org.apache.commons.io.FileUtils;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.SlowCompositeReaderWrapper;
