@@ -39,7 +39,7 @@ public class ImportMedlineJob extends Job {
         //Get all the citations of the last 3 years (tnow, t-1, t-2 - e.g. 2013, 2012, 2011)
         int now = Integer.parseInt((String) play.Play.configuration.get("analysis.year"));
         String endDigits = Integer.toString(now - 3).substring(2);
-        String startDigit = Integer.toString(now).substring(2);
+        String startDigit = Integer.toString(now + 1).substring(2);
 
         Logger.info("Retrieving citations...");
 
