@@ -84,7 +84,7 @@ public class ComputeTrendsJob extends Job {
             time.start();
             counter++;
             Logger.info("i: " + counter + "/" + total + " (" + phrase.value + ")");
-            int frequencyThen = query(phrase.value);
+            int frequencyThen = query("\"" + phrase.value + "\"");
             time.stop();
             Logger.info("- Query time: " + time.elapsed(TimeUnit.MILLISECONDS));
 

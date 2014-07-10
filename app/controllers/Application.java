@@ -1,5 +1,6 @@
 package controllers;
 
+import java.util.List;
 import jobs.BuildIndexJob;
 import jobs.ComputeIndexDistribution;
 import jobs.ComputeMorphiaIF;
@@ -19,6 +20,7 @@ import jobs.LuceneStartifiedIndexing;
 import jobs.MedlineImportJob;
 import jobs.SaveIndexJob;
 import models.MorphiaJournal;
+import models.MorphiaPhrase;
 import play.Logger;
 import play.mvc.*;
 
@@ -31,6 +33,25 @@ public class Application extends Controller {
 
     public static void index() {
         render();
+    }
+    
+    public static void concept(String id) {
+        MorphiaPhrase concept = MorphiaPhrase.findById(id);
+        render(concept);
+    }
+    
+    public static void trends(String attr, String sort){
+        String direction = "";
+        if(sort.equals("desc")){
+            direction = "-";
+        }
+        String property = "trend";
+        if(attr.equals("volume")){
+            property = "volumetricTrend";
+        }
+        
+        List<MorphiaPhrase> concepts = MorphiaPhrase.q().filter("trend exists", true).order(direction + property).limit(20).asList();
+        render(concepts, attr, sort);
     }
     
     public static void computeMorphiaIF() {

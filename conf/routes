@@ -7,7 +7,8 @@ GET     /                                       Application.index
 GET     /query/{query}                                       Application.luceneQuery
 
 GET     /issn/{issn}                                       Application.journal
-
+GET     /concept/{id}                                       Application.concept
+GET     /trends/{attr}/{sort}                                       Application.trends
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

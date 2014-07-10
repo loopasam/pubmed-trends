@@ -16,10 +16,7 @@
                         href="@{Application.index()}"><span class="fa fa-home"></span>
                         Home</a></li>
                 <li class="${menu == 'curation' ? 'active' : ''}"><a
-                        href="#"><span class="fa fa-eye"></span>
-                        Concepts</a></li>
-                <li class="${menu == 'starred' ? 'active' : ''}"><a
-                        href="#"><span class="fa fa-star"></span>
+                        href="@{Application.trends("standard", "desc")}"><span class="fa fa-eye"></span>
                         Trends</a></li>
             </ul>
         </div>

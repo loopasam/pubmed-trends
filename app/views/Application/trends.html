@@ -1,0 +1,33 @@
+#{extends 'main.html' /}
+#{set title:'Trends' /}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th style="width: 30%">Concept</th>
+            <th>
+                <a href='#{if sort == 'asc' && attr == 'standard'} @{Application.trends("standard", "desc")} #{/if}
+                   #{elseif sort == 'desc' && attr == 'standard'} @{Application.trends("standard", "asc")} #{/elseif}
+                   #{elseif attr == 'volume'} @{Application.trends("standard", "desc")} #{/elseif}'>Trend [%] 
+                    <span class="glyphicon ${attr == 'standard' ? 'glyphicon glyphicon-sort-by-attributes' : ''}${sort == 'asc' ? '' : '-alt'}"></span>
+                </a>
+            </th>
+            <th>        
+                <a href='#{if sort == 'asc' && attr == 'volume'} @{Application.trends("volume", "desc")} #{/if}
+                   #{elseif sort == 'desc' && attr == 'volume'} @{Application.trends("volume", "asc")} #{/elseif}
+                   #{elseif attr == 'standard'} @{Application.trends("volume", "desc")} #{/elseif}'>Volumetric trend [%·V] 
+                    <span class="glyphicon ${attr == 'volume' ? 'glyphicon glyphicon-sort-by-attributes' : ''}${sort == 'asc' ? '' : '-alt'}"></span>
+                </a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        #{list items:concepts, as:'concept'}
+        <tr>
+            <td><a href="@{Application.concept(concept.id)}">${concept.value}</a></td>
+            <td>${concept.trend.format('#.000')}</td>
+            <td>${concept.volumetricTrend.format('#.000')}</td>
+        </tr>
+        #{/list}
+    </tbody>
+</table>

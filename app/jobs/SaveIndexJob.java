@@ -39,6 +39,7 @@ public class SaveIndexJob extends Job {
         Stopwatch stopwatch = Stopwatch.createUnstarted();
         stopwatch.start();
 
+        //TODO do not hardcode the date
         Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/indexes/index-2013").getRealFile());
 
         DirectoryReader ireader = DirectoryReader.open(directory);

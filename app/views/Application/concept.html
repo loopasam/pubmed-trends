@@ -1,0 +1,10 @@
+#{extends 'main.html' /}
+#{set title:'Concept: ' + concept.value /}
+
+
+<div class="page-header">
+  <h1>${concept.value} <small>ID: ${concept.id}</small></h1>
+</div>
+
+<p>${concept.trend.format('#.000')}</p>
+<p>${concept.volumetricTrend.format('#.000')}</p>
