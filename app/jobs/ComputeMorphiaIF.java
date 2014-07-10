@@ -36,16 +36,12 @@ public class ComputeMorphiaIF extends Job {
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         //Should be limited when loading
-        Date start = sdf.parse("01/01/" + now);
-        Logger.info("Start: " + start);
-        Date end = sdf.parse("31/12/" + y2);
-        Logger.info("Stop: " + end);
+        Date end = sdf.parse("01/01/" + now);
+        Logger.info("End: " + end);
 
         for (MorphiaJournal journal : journals) {
             counter++;
             Logger.info(journal.title + ": " + counter + "/" + total);
-
-            MorphiaQuery q = MorphiaCitation.q();
 
             List<MorphiaCitation> citations
                     = MorphiaCitation.q().filter("created <", end).filter("journalAbbreviation", journal.issn).asList();
@@ -68,6 +64,7 @@ public class ComputeMorphiaIF extends Job {
                     openIF = (double) sum(counts) / citations.size();
                 }
                 Logger.info("- IF: " + openIF);
+                
                 //Compute the standard deviation of the sample(population)
                 double squaredDiff = 0.0;
                 for (Integer citationCount : counts) {
@@ -79,6 +76,7 @@ public class ComputeMorphiaIF extends Job {
                     deviationIF = Math.sqrt(squaredDiff / citations.size());
                 }
                 Logger.info("- Deviation: " + deviationIF);
+                
                 //Save the modifications journal
                 journal.openImpactFactor = openIF;
                 journal.deviationIF = deviationIF;

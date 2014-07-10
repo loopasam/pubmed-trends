@@ -7,6 +7,7 @@ import jobs.ComputeNCITdistribution;
 import jobs.ComputeOpenIF;
 import jobs.ComputeStratifiedFrequencies;
 import jobs.ComputeStratifiedFrequencies2;
+import jobs.ComputeTrendsJob;
 import jobs.DumpIndex;
 import jobs.ImportMedlineJob;
 import jobs.LoadMongoDb;
@@ -16,6 +17,7 @@ import jobs.LuceneIndexingInDb;
 import jobs.LuceneQuery;
 import jobs.LuceneStartifiedIndexing;
 import jobs.MedlineImportJob;
+import jobs.SaveIndexJob;
 import models.MorphiaJournal;
 import play.Logger;
 import play.mvc.*;
@@ -82,12 +84,12 @@ public class Application extends Controller {
     }
 
     public static void indexInDb() {
-        new LuceneIndexingInDb().now();
+        new SaveIndexJob().now();
         index();
     }
 
     public static void computeTrends() {
-        new ComputeStratifiedFrequencies().now();
+        new ComputeTrendsJob().now();
         index();
     }
 

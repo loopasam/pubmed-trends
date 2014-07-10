@@ -17,7 +17,8 @@ import play.jobs.Job;
 import play.test.MorphiaFixtures;
 
 /**
- *
+ *TO KEEP
+ * Import the content of PUB_LIT into the mongoDB
  * @author loopasam
  */
 public class ImportMedlineJob extends Job {

@@ -21,6 +21,7 @@ import play.jobs.Job;
 import play.vfs.VirtualFile;
 
 /**
+ * TO KEEP
  *Iterate over the whole index and compute the frequency distribution of all the shingles.
  * This step is there to know how the shingles distribute and what threshold should be considered.
  * @author loopasam
@@ -32,7 +33,6 @@ public class ComputeIndexDistribution extends Job {
 
         Logger.info("Job started...");
         
-//        Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/luceneAbstract").getRealFile());
         Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/indexes/index-2013").getRealFile());
         DirectoryReader ireader = DirectoryReader.open(directory);
 
@@ -63,7 +63,6 @@ public class ComputeIndexDistribution extends Job {
             }
         }
 
-//        File file = new File("data/distribution-frequency-in-corpus-all-shingles.csv");
         File file = new File("data/distribution-frequency-in-corpus-2013-shingles.csv");
         StringBuilder sb = new StringBuilder();
         for (Integer frequency : distribution.keySet()) {

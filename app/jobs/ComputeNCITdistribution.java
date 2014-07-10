@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import models.MorphiaOntologyTerm;
 import models.OntologyTerm;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -35,9 +36,10 @@ import utils.CustomStandardAnalyzer;
 import utils.Utils;
 
 /**
+ * TO KEEP
  * Iterates over the concepts of the NCIT and searches for the number of
- * documents indexed.
- *
+ * documents indexed. Important in order to estimate how often curated words are present
+ * in the wild.
  * @author loopasam
  */
 public class ComputeNCITdistribution extends Job {
@@ -49,12 +51,11 @@ public class ComputeNCITdistribution extends Job {
         Stopwatch stopwatch = Stopwatch.createUnstarted();
         stopwatch.start();
 
-        List<OntologyTerm> terms = OntologyTerm.findAll();
-//        List<OntologyTerm> terms = fullterms.subList(0, 1000);
+        List<MorphiaOntologyTerm> terms = MorphiaOntologyTerm.findAll();
         
         int total = terms.size();
         int counter = 0;
-        Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/luceneAbstract").getRealFile());
+        Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/indexes/index-2013").getRealFile());
         DirectoryReader ireader = DirectoryReader.open(directory);
 
         //Just chunck the words - no stop word removal - such concept will not give any result in principle
@@ -62,9 +63,9 @@ public class ComputeNCITdistribution extends Job {
         IndexSearcher isearcher = new IndexSearcher(ireader);
         QueryParser parser = new QueryParser(Version.LUCENE_47, "contents", analyzer);
 
-//        Map<Long, Integer> freqs = new HashMap<Long, Integer>();
-        for (OntologyTerm ontologyTerm : terms) {
+        for (MorphiaOntologyTerm ontologyTerm : terms) {
             counter++;
+            
             Logger.info("i: " + counter + "/" + total);
             Stopwatch timeQuery = Stopwatch.createUnstarted();
             timeQuery.start();
@@ -73,13 +74,12 @@ public class ComputeNCITdistribution extends Job {
             timeQuery.stop();
             Logger.info("Query time: " + timeQuery.elapsed(TimeUnit.MILLISECONDS));
 
-//            freqs.put(ontologyTerm.id, hits.length);
             Stopwatch timeUpdate = Stopwatch.createUnstarted();
             timeUpdate.start();
-            ontologyTerm.updateFrequency(hits.length);
+            ontologyTerm.frequency = hits.length;
+            ontologyTerm.save();
             timeUpdate.stop();
             Logger.info("Update time: " + timeUpdate.elapsed(TimeUnit.MILLISECONDS));
-            
             Logger.info("Query: " + ontologyTerm.value + " - " + hits.length);
         }
 

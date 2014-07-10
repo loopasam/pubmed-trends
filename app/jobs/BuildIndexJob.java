@@ -29,7 +29,7 @@ import play.modules.morphia.Model;
 import play.vfs.VirtualFile;
 
 /**
- * Compute the stratified indexes, high memory job
+ * TO KEEP Compute the stratified indexes, high memory job
  *
  * @author loopasam
  */
@@ -59,8 +59,6 @@ public class BuildIndexJob extends Job {
             Date start = sdf.parse("01/01/" + t);
             Date end = sdf.parse("31/12/" + t);
 
-            Model.MorphiaQuery q = MorphiaCitation.q();
-
             Logger.info("Query for year " + t + "...");
             List<MorphiaCitation> citations
                     = MorphiaCitation.q().filter("created <=", end).filter("created >=", start).asList();
@@ -76,6 +74,7 @@ public class BuildIndexJob extends Job {
                 Document doc = new Document();
                 String contents = "";
 
+                //TODO save the PMID?
                 if (citation.abstractText != null) {
                     contents += citation.abstractText;
                 }
@@ -91,11 +90,10 @@ public class BuildIndexJob extends Job {
                 iwriter.addDocument(doc);
 
             }
-
             iwriter.close();
-            stopwatch.stop();
-            Logger.info("Time to index the documents: " + stopwatch.elapsed(TimeUnit.MINUTES));
         }
+        stopwatch.stop();
+        Logger.info("Time to index the documents: " + stopwatch.elapsed(TimeUnit.MINUTES));
     }
 
 }

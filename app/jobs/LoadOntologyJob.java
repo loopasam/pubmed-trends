@@ -14,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import models.MorphiaOntologyTerm;
 import models.OntologyTerm;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -27,6 +28,7 @@ import uk.ac.ebi.brain.core.Brain;
 import utils.CustomStandardAnalyzer;
 
 /**
+ * TO KEEP
  *Loads the NCIT ontology, and computes the length of the entries
  * in the same time. The job is fast, less than 5 minutes.
  * @author loopasam
@@ -66,18 +68,12 @@ public class LoadOntologyJob extends Job {
                 counter++;
                 Logger.info("branch: " + countertop + "/" + totaltop + " - i: " + counter + "/" + total);
 
-                
                 String subLabel = brain.getLabel(subclass);
                 totalLength = getTotalLength(subLabel);
                 stopWordLength = getLengthWithoutStopWords(subLabel);
                 
-                new OntologyTerm(subLabel, subclass, branch, totalLength, stopWordLength).save();
+                new MorphiaOntologyTerm(subLabel, subclass, branch, totalLength, stopWordLength).save();
                 
-                if (counter % 500 == 0) {
-                    OntologyTerm.em().flush();
-                    OntologyTerm.em().clear();
-                }
-
             }
 
         }
