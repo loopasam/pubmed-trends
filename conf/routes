@@ -9,6 +9,8 @@ GET     /query/{query}                                       Application.luceneQ
 GET     /issn/{issn}                                       Application.journal
 GET     /concept/{id}                                       Application.concept
 GET     /trends/{attr}/{sort}                                       Application.trends
+GET     /search/{query}.json                                       Application.search
+
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

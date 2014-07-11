@@ -1,6 +1,7 @@
 package controllers;
 
 import java.util.List;
+import java.util.regex.Pattern;
 import jobs.BuildIndexJob;
 import jobs.ComputeIndexDistribution;
 import jobs.ComputeMorphiaIF;
@@ -35,35 +36,43 @@ public class Application extends Controller {
         render();
     }
     
+    public static void search(String query) {
+        Logger.info(query);
+        List<MorphiaPhrase> concept = MorphiaPhrase.find("value", Pattern.compile(query, Pattern.CASE_INSENSITIVE)).limit(5).asList();
+        renderJSON(concept);
+    }
+
     public static void concept(String id) {
         MorphiaPhrase concept = MorphiaPhrase.findById(id);
-        render(concept);
+
+        List<MorphiaPhrase> nexts = MorphiaPhrase.filter("trend >", concept.trend).limit(5).asList();
+        render(concept, nexts);
     }
-    
-    public static void trends(String attr, String sort){
+
+    public static void trends(String attr, String sort) {
         String direction = "";
-        if(sort.equals("desc")){
+        if (sort.equals("desc")) {
             direction = "-";
         }
         String property = "trend";
-        if(attr.equals("volume")){
+        if (attr.equals("volume")) {
             property = "volumetricTrend";
         }
-        
-        List<MorphiaPhrase> concepts = MorphiaPhrase.q().filter("trend exists", true).order(direction + property).limit(20).asList();
+
+        List<MorphiaPhrase> concepts = MorphiaPhrase.q().filter("trend exists", true).order(direction + property).limit(50).asList();
         render(concepts, attr, sort);
     }
-    
+
     public static void computeMorphiaIF() {
         new ComputeMorphiaIF().now();
         index();
     }
-    
+
     public static void journal(String issn) {
         MorphiaJournal journal = MorphiaJournal.find("issn", issn).first();
         render(journal);
     }
-    
+
     public static void loadMongo() {
         new LoadMongoDb().now();
         index();

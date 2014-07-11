@@ -1,10 +1,16 @@
 #{extends 'main.html' /}
 #{set title:'Concept: ' + concept.value /}
 
+#{list items:nexts, as:'next'}
+${next.value}
+#{/list}
 
 <div class="page-header">
-  <h1>${concept.value} <small>ID: ${concept.id}</small></h1>
+    <h1><span class="label label-default">${concept.value}</span> <small>OBLM:${concept.id}</small></h1>
 </div>
-
-<p>${concept.trend.format('#.000')}</p>
-<p>${concept.volumetricTrend.format('#.000')}</p>
+<div class="jumbotron">
+    <h1>Trend [%]: <span class="glyphicon glyphicon-arrow-${concept.trend > 0 ? 'up' : 'down'}"></span> ${concept.trend.format('#.000')}</h1>
+  <p>Volumetric trend [%·V]: <span class="glyphicon glyphicon-arrow-${concept.trend > 0 ? 'up' : 'down'}"></span> ${concept.volumetricTrend.format('#.000')}</p>
+  <p>freq(now): ${concept.frequencyNow}</p>
+  <p>freq(now - 1): ${concept.frequencyThen.format('#')}</p>
+</div>

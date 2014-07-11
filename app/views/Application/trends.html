@@ -1,33 +1,107 @@
 #{extends 'main.html' /}
 #{set title:'Trends' /}
+<div class="page-header">
+    <h1><span class="fa fa-bar-chart-o"></span> Trends <small>${play.configuration['analysis.year']}</small></h1>
+</div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th style="width: 30%">Concept</th>
-            <th>
-                <a href='#{if sort == 'asc' && attr == 'standard'} @{Application.trends("standard", "desc")} #{/if}
-                   #{elseif sort == 'desc' && attr == 'standard'} @{Application.trends("standard", "asc")} #{/elseif}
-                   #{elseif attr == 'volume'} @{Application.trends("standard", "desc")} #{/elseif}'>Trend [%] 
-                    <span class="glyphicon ${attr == 'standard' ? 'glyphicon glyphicon-sort-by-attributes' : ''}${sort == 'asc' ? '' : '-alt'}"></span>
-                </a>
-            </th>
-            <th>        
-                <a href='#{if sort == 'asc' && attr == 'volume'} @{Application.trends("volume", "desc")} #{/if}
-                   #{elseif sort == 'desc' && attr == 'volume'} @{Application.trends("volume", "asc")} #{/elseif}
-                   #{elseif attr == 'standard'} @{Application.trends("volume", "desc")} #{/elseif}'>Volumetric trend [%·V] 
-                    <span class="glyphicon ${attr == 'volume' ? 'glyphicon glyphicon-sort-by-attributes' : ''}${sort == 'asc' ? '' : '-alt'}"></span>
-                </a>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        #{list items:concepts, as:'concept'}
-        <tr>
-            <td><a href="@{Application.concept(concept.id)}">${concept.value}</a></td>
-            <td>${concept.trend.format('#.000')}</td>
-            <td>${concept.volumetricTrend.format('#.000')}</td>
-        </tr>
-        #{/list}
-    </tbody>
-</table>
+<script type="text/javascript">
+    $(document).ready(function() {
+        console.log("run");
+        var results = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: '/search/%QUERY.json'
+        });
+
+        results.initialize();
+        $('#search').on('propertychange keyup input paste', function(e) {
+            var query = $('#search').val();
+            console.log(query);
+            //call json
+            if (query.length > 2) {
+                $.ajax({
+                    type: "GET",
+                    url: "/search/" + query + ".json",
+                }).done(function(json) {
+                    console.log(json);
+                });
+            }
+        })
+
+//        $('table').waypoint(function(direction) {
+//            if (direction == 'down') {
+//                var query = $('#search').val();
+//                $.ajax({
+//                    type: "GET",
+//                    url: "/search/ic.json",
+//                }).done(function(json) {
+//                    console.log(json);
+//                    var lines;
+//                    json.forEach(function(concept) {
+//                        lines += "<tr><td>";
+//                        lines += concept.value + "</td><td>" + concept.trend + "</td><td>" + concept.volumetricTrend + "</td></tr>";
+//                    });
+//
+//                    $('table tr:last').after(lines);
+//                });
+//
+//            }
+//        }, { offset: '100%' });
+
+
+        $('.typeahead').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 1
+        }, {
+            name: 'states',
+            displayKey: 'value',
+            source: results.ttAdapter()
+        });
+
+    });
+</script>
+
+
+<div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">Trends in the biomedical literature in ${play.configuration['analysis.year']}</div>
+    <div class="panel-body">
+        <form class="text-center" role="form">
+            <div style="display: inline-block;" class="well form-group">
+                <input type="text" class="typeahead form-control" id="search" placeholder="Enter a concept">
+                <button type="submit" class="btn btn-default">Search</button>
+            </div>
+        </form>
+    </div>
+    <table class="table table-bordered table-hover">
+        <thead>
+            <tr>
+                <th>Concept</th>
+                <th>
+                    <a style="display: block;" href='#{if sort == 'asc' && attr == 'standard'} @{Application.trends("standard", "desc")} #{/if}
+                       #{elseif sort == 'desc' && attr == 'standard'} @{Application.trends("standard", "asc")} #{/elseif}
+                       #{elseif attr == 'volume'} @{Application.trends("standard", "desc")} #{/elseif}'>
+                       <span class="fa ${attr == 'standard' ? 'fa-arrow-circle-' : ''}${sort == 'asc' ? 'down' : 'up'}"></span> Trend [%] 
+                    </a>
+                </th>
+                <th>        
+                    <a style="display: block;" href='#{if sort == 'asc' && attr == 'volume'} @{Application.trends("volume", "desc")} #{/if}
+                       #{elseif sort == 'desc' && attr == 'volume'} @{Application.trends("volume", "asc")} #{/elseif}
+                       #{elseif attr == 'standard'} @{Application.trends("volume", "desc")} #{/elseif}'>
+                       <span class="fa ${attr == 'volume' ? 'fa-arrow-circle-' : ''}${sort == 'asc' ? 'down' : 'up'}"></span> Volumetric trend [%·V] 
+                    </a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            #{list items:concepts, as:'concept'}
+            <tr>
+                <td><a style="display: block;" href="@{Application.concept(concept.id)}">${concept.value}</a></td>
+                <td>${concept.trend.format('#.000')}</td>
+                <td>${concept.volumetricTrend.format('#')}</td>
+            </tr>
+            #{/list}
+        </tbody>
+    </table>
+</div>
