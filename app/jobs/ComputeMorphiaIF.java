@@ -6,6 +6,8 @@
 package jobs;
 
 import com.mongodb.BasicDBObject;
+
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,14 +43,16 @@ public class ComputeMorphiaIF extends Job {
 
         for (MorphiaJournal journal : journals) {
             counter++;
-            Logger.info(journal.title + ": " + counter + "/" + total);
+            
 
             List<MorphiaCitation> citations
                     = MorphiaCitation.q().filter("created <", end).filter("journalAbbreviation", journal.issn).asList();
 
+            Logger.info(journal.issn + ": " + counter + "/" + total + " - " + citations.size());
+            
             if (citations.size() > 0) {
                 
-                Logger.info("Citations: " + citations.size());
+                //Logger.info("Citations: " + citations.size());
                 journal.isOldEnough = true;
 
                 List<Integer> counts = new ArrayList<Integer>();
@@ -56,6 +60,8 @@ public class ComputeMorphiaIF extends Job {
                     //Deal with the zero citations
                     counts.add(citation.citationCount);
                 }
+                
+                Logger.info(counts.toString());
 
                 double openIF = 0.0;
                 double deviationIF = 0.0;
@@ -63,7 +69,7 @@ public class ComputeMorphiaIF extends Job {
                 if (citations.size() > 0) {
                     openIF = (double) sum(counts) / citations.size();
                 }
-                Logger.info("- IF: " + openIF);
+                //Logger.info("- IF: " + openIF);
                 
                 //Compute the standard deviation of the sample(population)
                 double squaredDiff = 0.0;
@@ -75,11 +81,12 @@ public class ComputeMorphiaIF extends Job {
                 if (citations.size() > 0) {
                     deviationIF = Math.sqrt(squaredDiff / citations.size());
                 }
-                Logger.info("- Deviation: " + deviationIF);
+                //Logger.info("- Deviation: " + deviationIF);
                 
                 //Save the modifications journal
                 journal.openImpactFactor = openIF;
                 journal.deviationIF = deviationIF;
+                journal.displayOIF = new DecimalFormat("#.00").format(deviationIF);
                 journal.counts = counts;
                 journal.save();
             }

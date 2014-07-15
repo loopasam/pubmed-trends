@@ -27,6 +27,7 @@ luceneAbstract/
 nbproject/
 data/NCITNCBO.owl
 indexes/
+pubmed-trends.ipr
 
 # Ignore configuration file #
 conf/application.conf

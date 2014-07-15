@@ -6,6 +6,8 @@
 package jobs;
 
 import com.google.common.base.Stopwatch;
+
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -113,6 +115,7 @@ public class ComputeTrendsJob extends Job {
             phrase.trend = trend;
             phrase.frequencyThen = frequencyThen;
             phrase.volumetricTrend = volumetricTrend;
+            phrase.displayTrend = new DecimalFormat("#.00").format(trend);
             phrase.save();
         }
 

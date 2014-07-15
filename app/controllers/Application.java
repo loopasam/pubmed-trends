@@ -35,10 +35,24 @@ public class Application extends Controller {
     public static void index() {
         render();
     }
+
+    public static void triggerSearch(String searchtype, String query) {
+        Logger.info("Query: " + query + " - Type: " + searchtype);
+        //Performs the query on either of the collections depending on searchtype
+        MorphiaPhrase concept = MorphiaPhrase.find("value", query).first();
+        concept(concept.getIdAsStr());
+    }
     
-    public static void search(String query) {
-        List<MorphiaPhrase> concept = MorphiaPhrase.find("value", Pattern.compile(query, Pattern.CASE_INSENSITIVE)).limit(5).asList();
-        renderJSON(concept);
+    public static void searchPhrases(String query) {
+        //TODO determine how many to keep
+        List<MorphiaPhrase> concepts = MorphiaPhrase.find("value", Pattern.compile("^" + query, Pattern.CASE_INSENSITIVE)).limit(3).asList();
+        renderJSON(concepts);
+    }
+
+    public static void searchJournals(String query) {
+        //TODO determine how many to keep
+        List<MorphiaJournal> journals = MorphiaJournal.find("issn", Pattern.compile("^" + query, Pattern.CASE_INSENSITIVE)).limit(3).asList();
+        renderJSON(journals);
     }
 
     public static void concept(String id) {
@@ -58,7 +72,7 @@ public class Application extends Controller {
             property = "volumetricTrend";
         }
 
-        List<MorphiaPhrase> concepts = MorphiaPhrase.q().filter("trend exists", true).filter("isNewPhrase", true).order(direction + property).limit(50).asList();
+        List<MorphiaPhrase> concepts = MorphiaPhrase.q().filter("trend exists", true).filter("isNew", false).order(direction + property).limit(50).asList();
         render(concepts, attr, sort);
     }
 

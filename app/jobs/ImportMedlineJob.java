@@ -17,8 +17,8 @@ import play.jobs.Job;
 import play.test.MorphiaFixtures;
 
 /**
- *TO KEEP
- * Import the content of PUB_LIT into the mongoDB
+ * TO KEEP Import the content of PUB_LIT into the mongoDB
+ *
  * @author loopasam
  */
 public class ImportMedlineJob extends Job {
@@ -51,6 +51,7 @@ public class ImportMedlineJob extends Job {
                 + "AND CREATED > '31-DEC-" + endDigits + "'";
 
         PreparedStatement pstmt = c.prepareStatement(citationQuery);
+        //pstmt.setMaxRows(100000);
         ResultSet rsCitations = pstmt.executeQuery();
 
         int counter = 1;
@@ -70,25 +71,37 @@ public class ImportMedlineJob extends Job {
             String pmid = rsCitations.getString("EXTERNAL_ID");
             String created = rsCitations.getString("CREATED");
 
-            //Do other queries to retrieve the rest
-            String complementQuery = "SELECT ISO_ABBREVIATION, CITATION_COUNT "
-                    + "FROM CDB.CITATIONS c, CDB.JOURNAL_ISSUES ji, CDB.CV_JOURNALS j, CDB.CN_METRICS m "
+            //Do other queries to retrieve the journal abbreviation
+            String abbrevQuery = "SELECT ISO_ABBREVIATION "
+                    + "FROM CDB.CITATIONS c, CDB.JOURNAL_ISSUES ji, CDB.CV_JOURNALS j "
                     + "WHERE c.EXTERNAL_ID = '" + pmid + "' "
                     + "AND c.JOURNAL_ISSUE_ID = ji.ID "
-                    + "AND ji.JOURNAL_ID = j.ID "
-                    + "AND m.CITATION_ID = c.ID";
+                    + "AND ji.JOURNAL_ID = j.ID";
 
-            PreparedStatement pstmtComplement = c.prepareStatement(complementQuery);
+            PreparedStatement pstmtComplement = c.prepareStatement(abbrevQuery);
             ResultSet rsComplement = pstmtComplement.executeQuery();
             String journalAbbreviation = null;
-            String citationCount = null;
             while (rsComplement.next()) {
                 journalAbbreviation = rsComplement.getString("ISO_ABBREVIATION");
-                citationCount = rsComplement.getString("CITATION_COUNT");
             }
             pstmtComplement.close();
             rsComplement.close();
 
+            //Do other queries to retrieve the citation count
+            String countsQuery = "SELECT CITATION_COUNT "
+                    + "FROM CDB.CITATIONS c, CDB.CN_METRICS m "
+                    + "WHERE c.EXTERNAL_ID = '" + pmid + "' "
+                    + "AND m.CITATION_ID = c.ID";
+
+            PreparedStatement pstmtCount = c.prepareStatement(countsQuery);
+            ResultSet rsCount = pstmtCount.executeQuery();
+            String citationCount = null;
+            while (rsCount.next()) {
+                citationCount = rsCount.getString("CITATION_COUNT");
+            }
+            pstmtCount.close();
+            rsCount.close();
+            
             Logger.info("Record (PMID: " + pmid + ") - " + counter);
             counter++;
             new MorphiaCitation(pmid, title, abstractText, created, journalAbbreviation, citationCount).save();

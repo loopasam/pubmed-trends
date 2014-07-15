@@ -4,66 +4,9 @@
     <h1><span class="fa fa-bar-chart-o"></span> Trends <small>${play.configuration['analysis.year']}</small></h1>
 </div>
 
-<script type="text/javascript">
-    $(document).ready(function() {
-        console.log("run");
-        var results = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            remote: '/search/%QUERY.json'
-        });
-
-        results.initialize();
-        $('#search').on('propertychange keyup input paste', function(e) {
-            var query = $('#search').val();
-            console.log(query);
-            //call json
-            if (query.length > 2) {
-                $.ajax({
-                    type: "GET",
-                    url: "/search/" + query + ".json",
-                }).done(function(json) {
-                    console.log(json);
-                });
-            }
-        })
-
-
-//http://stackoverflow.com/questions/9425024/submit-selection-on-bootstrap-typeahead-autocomplete
-
-        $('#custom-templates .typeahead').typeahead({
-            hint: true,
-            highlight: true,
-            minLength: 1
-        }, {
-            name: 'states',
-            displayKey: 'value',
-            source: results.ttAdapter(),
-            templates: {
-                empty: [
-                    '<div class="empty-message">',
-                    'unable to find any Best Picture winners that match the current query',
-                    '</div>'
-                ].join('\n'),
-                suggestion: Handlebars.compile('<p><strong>{{value}}</strong> – {{trend}}</p>')
-            }
-        });
-
-    });
-</script>
-
-
 <div class="panel panel-default">
     <!-- Default panel contents -->
     <div class="panel-heading">Trends in the biomedical literature in ${play.configuration['analysis.year']}</div>
-    <div class="panel-body">
-        <form class="text-center" role="form">
-            <div style="display: inline-block;" class="well form-group" id="custom-templates">
-                <input type="text" class="typeahead form-control" id="search" placeholder="Enter a concept">
-                <button type="submit" class="btn btn-default">Search</button>
-            </div>
-        </form>
-    </div>
     <table class="table table-bordered table-hover">
         <thead>
             <tr>

@@ -6,6 +6,7 @@
 package models;
 
 import com.google.code.morphia.annotations.Entity;
+import com.google.code.morphia.annotations.Indexed;
 import play.modules.morphia.Model;
 
 /**
@@ -15,6 +16,7 @@ import play.modules.morphia.Model;
 @Entity
 public class MorphiaPhrase extends Model {
 
+    @Indexed
     public String value;
 
     //Document frequency for t(now)
@@ -28,6 +30,8 @@ public class MorphiaPhrase extends Model {
     public double volumetricTrend;
     
     public boolean isNew;
+
+    public String displayTrend;
 
     public MorphiaPhrase(String value, int frequency) {
         this.value = value;

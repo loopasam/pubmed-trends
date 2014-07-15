@@ -1,16 +1,17 @@
 #{extends 'main.html' /}
 #{set title:'Concept: ' + concept.value /}
 
+
+<div class="page-header">
+    <h1><span class="fa fa-asterisk"></span> <u>${concept.value}</u> <small>${concept.id}</small></h1>
+</div>
+<h3>Trend: <span class="fa fa-arrow-${concept.trend > 0 ? 'up' : 'down text-danger'}"></span> ${concept.trend.format('#.000')} [%]</h3>
+<p>Volumetric trend [%·V]: <span class="fa fa-{concept.trend > 0 ? 'up' : 'down'}"></span> ${concept.volumetricTrend.format('#.000')}</p>
+<p>freq(now): ${concept.frequencyNow}</p>
+<p>freq(now - 1): ${concept.frequencyThen.format('#')}</p>
+
+        //TODO related table with neighbour terms.
+
 #{list items:nexts, as:'next'}
 ${next.value}
 #{/list}
-
-<div class="page-header">
-    <h1><span class="label label-default">${concept.value}</span> <small>OBLM:${concept.id}</small></h1>
-</div>
-<div class="jumbotron">
-    <h1>Trend [%]: <span class="glyphicon glyphicon-arrow-${concept.trend > 0 ? 'up' : 'down'}"></span> ${concept.trend.format('#.000')}</h1>
-  <p>Volumetric trend [%·V]: <span class="glyphicon glyphicon-arrow-${concept.trend > 0 ? 'up' : 'down'}"></span> ${concept.volumetricTrend.format('#.000')}</p>
-  <p>freq(now): ${concept.frequencyNow}</p>
-  <p>freq(now - 1): ${concept.frequencyThen.format('#')}</p>
-</div>

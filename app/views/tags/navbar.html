@@ -11,21 +11,20 @@
         </div>
 
         <div class="collapse navbar-collapse">
-
-            <form class="navbar-form navbar-left" role="search">
+            <form class="navbar-form navbar-left" role="search" action="@{Application.triggerSearch()}">
                 <div class="form-group" id="custom-templates">
-
-                    <input type="text" class="typeahead form-control" placeholder="Search concept or journal">
+                    <input name="query" type="text" class="typeahead form-control" placeholder="Search concept or journal">
+                    <input type="hidden" name="searchtype" id="searchtype">
                 </div>
             </form>
 
             <ul class="nav navbar-nav">
                 <li class="${menu == 'curation' ? 'active' : ''}"><a
                         href="@{Application.trends("standard", "desc")}"><span class="fa fa-bar-chart-o"></span>
-                        Trends</a></li>
+                    Top Trends</a></li>
                 <li class="${menu == 'curation' ? 'active' : ''}"><a
                         href=""><span class="fa fa-graduation-cap"></span>
-                        Open Impact Factor</a></li>
+                    Open Impact Factor</a></li>
                 <li class="${menu == 'curation' ? 'active' : ''}"><a
                         href=""><span class="fa fa-comment"></span> About</a></li>
             </ul>
@@ -34,3 +33,58 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        var phrases = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: '/searchPhrases/%QUERY.json'
+        });
+
+        var journals = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: '/searchJournals/%QUERY.json'
+        });
+
+
+        phrases.initialize();
+        journals.initialize();
+
+        $('#custom-templates .typeahead').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 3
+        }, {
+            name: 'phrases',
+            displayKey: 'value',
+            source: phrases.ttAdapter(),
+            templates: {
+                header: '<span class="dropdown-header">Concepts</span>',
+                empty: [
+                    '<div class="empty-message">',
+                    '<em>No concept matched</em>',
+                    '</div>'
+                ].join('\n'),
+                suggestion: Handlebars.compile('<p><strong>{{value}}</strong> <em>{{displayTrend}}</em></p>')
+            }
+        },{
+            name: 'journals',
+            displayKey: 'issn',
+            source: journals.ttAdapter(),
+            templates: {
+                header: '<span class="dropdown-header">Journals</span>',
+                empty: [
+                    '<div class="empty-message">',
+                    '<em>No ISSN matched</em>',
+                    '</div>'
+                ].join('\n'),
+                suggestion: Handlebars.compile('<p><strong>{{issn}}</strong> <em>{{displayOIF}}</em></p>')
+            }
+        }).on('typeahead:selected', function(e, obj, name){
+            $("#searchtype").val(name);
+            e.target.form.submit();
+        });
+    });
+</script>

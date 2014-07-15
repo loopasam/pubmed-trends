@@ -23,6 +23,8 @@ public class MorphiaJournal extends Model {
 
     public String iso;
 
+    public String displayOIF;
+
     @Indexed
     public String issn;
 
