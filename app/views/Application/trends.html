@@ -28,35 +28,25 @@
             }
         })
 
-//        $('table').waypoint(function(direction) {
-//            if (direction == 'down') {
-//                var query = $('#search').val();
-//                $.ajax({
-//                    type: "GET",
-//                    url: "/search/ic.json",
-//                }).done(function(json) {
-//                    console.log(json);
-//                    var lines;
-//                    json.forEach(function(concept) {
-//                        lines += "<tr><td>";
-//                        lines += concept.value + "</td><td>" + concept.trend + "</td><td>" + concept.volumetricTrend + "</td></tr>";
-//                    });
-//
-//                    $('table tr:last').after(lines);
-//                });
-//
-//            }
-//        }, { offset: '100%' });
 
+//http://stackoverflow.com/questions/9425024/submit-selection-on-bootstrap-typeahead-autocomplete
 
-        $('.typeahead').typeahead({
+        $('#custom-templates .typeahead').typeahead({
             hint: true,
             highlight: true,
             minLength: 1
         }, {
             name: 'states',
             displayKey: 'value',
-            source: results.ttAdapter()
+            source: results.ttAdapter(),
+            templates: {
+                empty: [
+                    '<div class="empty-message">',
+                    'unable to find any Best Picture winners that match the current query',
+                    '</div>'
+                ].join('\n'),
+                suggestion: Handlebars.compile('<p><strong>{{value}}</strong> – {{trend}}</p>')
+            }
         });
 
     });
@@ -68,7 +58,7 @@
     <div class="panel-heading">Trends in the biomedical literature in ${play.configuration['analysis.year']}</div>
     <div class="panel-body">
         <form class="text-center" role="form">
-            <div style="display: inline-block;" class="well form-group">
+            <div style="display: inline-block;" class="well form-group" id="custom-templates">
                 <input type="text" class="typeahead form-control" id="search" placeholder="Enter a concept">
                 <button type="submit" class="btn btn-default">Search</button>
             </div>

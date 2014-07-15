@@ -11,10 +11,15 @@
         </div>
 
         <div class="collapse navbar-collapse">
+
+            <form class="navbar-form navbar-left" role="search">
+                <div class="form-group" id="custom-templates">
+
+                    <input type="text" class="typeahead form-control" placeholder="Search concept or journal">
+                </div>
+            </form>
+
             <ul class="nav navbar-nav">
-                <li class="${menu == 'home' ? 'active' : ''}"><a
-                        href="@{Application.index()}"><span class="fa fa-university"></span>
-                        Home</a></li>
                 <li class="${menu == 'curation' ? 'active' : ''}"><a
                         href="@{Application.trends("standard", "desc")}"><span class="fa fa-bar-chart-o"></span>
                         Trends</a></li>
@@ -24,6 +29,8 @@
                 <li class="${menu == 'curation' ? 'active' : ''}"><a
                         href=""><span class="fa fa-comment"></span> About</a></li>
             </ul>
+
+
         </div>
     </div>
 </div>

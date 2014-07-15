@@ -8,13 +8,10 @@ package jobs;
 import com.google.common.base.Stopwatch;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import models.MorphiaCitation;
 import models.MorphiaPhrase;
-import models.Phrase;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.DirectoryReader;
@@ -87,6 +84,10 @@ public class ComputeTrendsJob extends Job {
             int frequencyThen = query("\"" + phrase.value + "\"");
             time.stop();
             Logger.info("- Query time: " + time.elapsed(TimeUnit.MILLISECONDS));
+
+            if (frequencyThen == 0) {
+                phrase.isNew = true;
+            }
 
             //std(c, t) = doc(c, t) / doc(t)
             //Trend: ( std(c, now) - std(c, then) ) / std(c, then)

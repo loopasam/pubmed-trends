@@ -37,7 +37,6 @@ public class Application extends Controller {
     }
     
     public static void search(String query) {
-        Logger.info(query);
         List<MorphiaPhrase> concept = MorphiaPhrase.find("value", Pattern.compile(query, Pattern.CASE_INSENSITIVE)).limit(5).asList();
         renderJSON(concept);
     }
@@ -59,7 +58,7 @@ public class Application extends Controller {
             property = "volumetricTrend";
         }
 
-        List<MorphiaPhrase> concepts = MorphiaPhrase.q().filter("trend exists", true).order(direction + property).limit(50).asList();
+        List<MorphiaPhrase> concepts = MorphiaPhrase.q().filter("trend exists", true).filter("isNewPhrase", true).order(direction + property).limit(50).asList();
         render(concepts, attr, sort);
     }
 

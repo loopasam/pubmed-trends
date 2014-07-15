@@ -46,5 +46,5 @@ public class MorphiaCitation extends Model {
     public String journalAbbreviation;
 
     public int citationCount;
-
+    
 }

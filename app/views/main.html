@@ -15,11 +15,15 @@
         <script src="@{'/public/js/jquery-2.1.1.min.js'}" type="text/javascript" charset="UTF-8"></script>
         <script src="@{'/public/js/bootstrap.min.js'}" type="text/javascript" charset="UTF-8"></script>
         <script src="@{'/public/js/typeahead.bundle.js'}" type="text/javascript" charset="UTF-8"></script>
-        <script src="@{'/public/js/waypoints.min.js'}" type="text/javascript" charset="UTF-8"></script>
+        <script src="@{'/public/js/handlebars-v1.3.0.js'}" type="text/javascript" charset="UTF-8"></script>
         #{get 'moreScripts' /}
         <style>
             td, th {text-align: center;}
             th {width: 33%}
+            #custom-templates .empty-message {
+                padding: 5px 10px;
+                text-align: center;
+            }
         </style>
 
     </head>

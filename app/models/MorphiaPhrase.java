@@ -26,10 +26,13 @@ public class MorphiaPhrase extends Model {
     public double trend;
     
     public double volumetricTrend;
+    
+    public boolean isNew;
 
     public MorphiaPhrase(String value, int frequency) {
         this.value = value;
         this.frequencyNow = frequency;
+        this.isNew = false;
     }
 
 }
