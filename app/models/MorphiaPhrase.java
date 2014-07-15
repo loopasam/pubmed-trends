@@ -33,10 +33,13 @@ public class MorphiaPhrase extends Model {
 
     public String displayTrend;
 
+    public int rank;
+
     public MorphiaPhrase(String value, int frequency) {
         this.value = value;
         this.frequencyNow = frequency;
         this.isNew = false;
+        this.rank = 0;
     }
 
 }

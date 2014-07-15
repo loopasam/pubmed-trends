@@ -1,5 +1,6 @@
 package controllers;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import jobs.BuildIndexJob;
@@ -39,8 +40,13 @@ public class Application extends Controller {
     public static void triggerSearch(String searchtype, String query) {
         Logger.info("Query: " + query + " - Type: " + searchtype);
         //Performs the query on either of the collections depending on searchtype
-        MorphiaPhrase concept = MorphiaPhrase.find("value", query).first();
-        concept(concept.getIdAsStr());
+        if("phrases".equals(searchtype)){
+            MorphiaPhrase concept = MorphiaPhrase.find("value", query).first();
+            concept(concept.getIdAsStr());
+        }else if("journals".equals(searchtype)){
+            MorphiaJournal journal = MorphiaJournal.find("issn", query).first();
+            journal(journal.getIdAsStr());
+        }
     }
     
     public static void searchPhrases(String query) {
@@ -57,10 +63,26 @@ public class Application extends Controller {
 
     public static void concept(String id) {
         MorphiaPhrase concept = MorphiaPhrase.findById(id);
-
-        List<MorphiaPhrase> nexts = MorphiaPhrase.filter("trend >", concept.trend).limit(5).asList();
-        render(concept, nexts);
+        List<MorphiaPhrase> neighbours = new ArrayList<MorphiaPhrase>();
+        for (int i = -2; i < 3; i++) {
+            int index = concept.rank + i;
+            MorphiaPhrase neighbour = MorphiaPhrase.find("rank", index).first();
+            neighbours.add(neighbour);
+        }
+        render(concept, neighbours);
     }
+
+    public static void journal(String id) {
+        MorphiaJournal journal = MorphiaJournal.findById(id);
+        List<MorphiaJournal> neighbours = new ArrayList<MorphiaJournal>();
+        for (int i = -2; i < 3; i++) {
+            int index = journal.rank + i;
+            MorphiaJournal neighbour = MorphiaJournal.find("rank", index).first();
+            neighbours.add(neighbour);
+        }
+        render(journal, neighbours);
+    }
+
 
     public static void trends(String attr, String sort) {
         String direction = "";
@@ -79,11 +101,6 @@ public class Application extends Controller {
     public static void computeMorphiaIF() {
         new ComputeMorphiaIF().now();
         index();
-    }
-
-    public static void journal(String issn) {
-        MorphiaJournal journal = MorphiaJournal.find("issn", issn).first();
-        render(journal);
     }
 
     public static void loadMongo() {

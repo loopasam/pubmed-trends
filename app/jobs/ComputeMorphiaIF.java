@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import models.MorphiaCitation;
 import models.MorphiaJournal;
+import models.MorphiaPhrase;
 import play.Logger;
 import play.jobs.Job;
 import play.modules.morphia.Model.MorphiaQuery;
@@ -43,15 +44,15 @@ public class ComputeMorphiaIF extends Job {
 
         for (MorphiaJournal journal : journals) {
             counter++;
-            
+
 
             List<MorphiaCitation> citations
                     = MorphiaCitation.q().filter("created <", end).filter("journalAbbreviation", journal.issn).asList();
 
             Logger.info(journal.issn + ": " + counter + "/" + total + " - " + citations.size());
-            
+
             if (citations.size() > 0) {
-                
+
                 //Logger.info("Citations: " + citations.size());
                 journal.isOldEnough = true;
 
@@ -60,7 +61,7 @@ public class ComputeMorphiaIF extends Job {
                     //Deal with the zero citations
                     counts.add(citation.citationCount);
                 }
-                
+
                 Logger.info(counts.toString());
 
                 double openIF = 0.0;
@@ -70,7 +71,7 @@ public class ComputeMorphiaIF extends Job {
                     openIF = (double) sum(counts) / citations.size();
                 }
                 //Logger.info("- IF: " + openIF);
-                
+
                 //Compute the standard deviation of the sample(population)
                 double squaredDiff = 0.0;
                 for (Integer citationCount : counts) {
@@ -82,7 +83,7 @@ public class ComputeMorphiaIF extends Job {
                     deviationIF = Math.sqrt(squaredDiff / citations.size());
                 }
                 //Logger.info("- Deviation: " + deviationIF);
-                
+
                 //Save the modifications journal
                 journal.openImpactFactor = openIF;
                 journal.deviationIF = deviationIF;
@@ -92,6 +93,16 @@ public class ComputeMorphiaIF extends Job {
             }
 
         }
+
+        Logger.info("Computing rank...");
+        int rank = 1;
+        journals = MorphiaJournal.q().filter("isOldEnough", true).order("-openImpactFactor").asList();
+        for (MorphiaJournal journal : journals) {
+            journal.rank = rank;
+            journal.save();
+            rank++;
+        }
+
         Logger.info("Job done.");
     }
 

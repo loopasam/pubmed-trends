@@ -1,10 +1,44 @@
 #{extends 'main.html' /}
 #{set title:'ISSN' /}
+<div class="page-header">
+    <h1><span class="fa fa-book"></span> <u>${journal.issn}</u> <small>ID:${journal.id}
+        </small></h1>
+</div>
 
-<h3>ISSN: ${journal.issn}</h3>
-<h3>ISO: ${journal.iso}</h3>
-<h3>Title: ${journal.title}</h3>
-<h3>IF: ${journal.openImpactFactor}</h3>
-<h3>Delta: ${journal.deviationIF}</h3>
-
-<h3>Counts: ${journal.counts}</h3>
+<div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">Trends related to the concept "${journal.issn}" in
+        the biomedical
+        literature (${play.configuration['analysis.year']} = </div>
+    <div class="panel-body">
+        <h2><strong>Open Impact Factor</strong>: ${journal.openImpactFactor.format('#.0')} ± ${journal.deviationIF.format('#.0')}
+            (${(journal.openImpactFactor - journal.deviationIF).format('#.0')} – ${(journal.openImpactFactor + journal.deviationIF).format('#.0')})</h2><hr>
+        <h4><strong>Title</strong>: ${journal.title}</h4>
+        <h4><strong>ISO</strong>: ${journal.iso}</h4>
+        <h4><strong>Total citations</strong>: ${journal.counts.size()}</h4>
+        <h4><a href="http://en.wikipedia.org/w/index.php?title=Special%3ASearch&search=next+generati&fulltext=Search">
+            <span class="fa fa-external-link"></span> Search on Wikipedia</a></h4>
+    </div>
+    <table class="table table-bordered table-hover">
+        <thead>
+        <tr class="active">
+            <th class="text-center">Rank</th>
+            <th class="text-center">Concept</th>
+            <th class="text-center"> Open Impact Factor</th>
+            <th class="text-center"> Range</th>
+        </tr>
+        </thead>
+        <tbody>
+        #{list items:neighbours, as:'neighbour'}
+        #{if neighbour != null}
+        <tr ${journal.rank == neighbour.rank ? 'class=info' : ''}>
+        <td>#${neighbour.rank}</td>
+        <td><a style="display: block;" href="@{Application.journal(neighbour.id)}">${neighbour.issn}</a></td>
+        <td>${neighbour.openImpactFactor.format('#.0')} ± ${neighbour.deviationIF.format('#.0')}</td>
+        <td>${(neighbour.openImpactFactor - neighbour.deviationIF).format('#.0')} – ${(neighbour.openImpactFactor + neighbour.deviationIF).format('#.0')}</td>
+        </tr>
+        #{/if}
+        #{/list}
+        </tbody>
+    </table>
+</div>

@@ -3,15 +3,39 @@
 
 
 <div class="page-header">
-    <h1><span class="fa fa-asterisk"></span> <u>${concept.value}</u> <small>${concept.id}</small></h1>
+    <h1><span class="fa fa-asterisk"></span> <u>${concept.value}</u> <small>ID:${concept.id}</small></h1>
 </div>
-<h3>Trend: <span class="fa fa-arrow-${concept.trend > 0 ? 'up' : 'down text-danger'}"></span> ${concept.trend.format('#.000')} [%]</h3>
-<p>Volumetric trend [%·V]: <span class="fa fa-{concept.trend > 0 ? 'up' : 'down'}"></span> ${concept.volumetricTrend.format('#.000')}</p>
-<p>freq(now): ${concept.frequencyNow}</p>
-<p>freq(now - 1): ${concept.frequencyThen.format('#')}</p>
 
-        //TODO related table with neighbour terms.
-
-#{list items:nexts, as:'next'}
-${next.value}
-#{/list}
+<div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">Trends related to the concept "${concept.value}" in
+        the biomedical
+        literature (${play.configuration['analysis.year']} = ${concept.frequencyNow.format('#')} documents,
+        ${Integer.parseInt(play.configuration['analysis.year']) - 1} = ${concept.frequencyThen.format('#')} documents).</div>
+    <div class="panel-body">
+        <h2><strong>Trend</strong>: <span class="fa fa-arrow-${concept.trend > 0 ? 'up' : 'down text-danger'}"></span> ${concept.trend.format('#.000')} [%]</h2>
+        <h3><strong>Volumetric trend</strong>: <span class="fa fa-arrow-${concept.volumetricTrend > 0 ? 'up' : 'down text-danger'}"></span> ${concept.volumetricTrend.format('#.000')} [%·V]</h3>
+    </div>
+    <table class="table table-bordered table-hover">
+        <thead>
+        <tr class="active">
+            <th class="text-center">Rank</th>
+            <th class="text-center">Concept</th>
+            <th class="text-center"> Trend [%]</th>
+            <th class="text-center"> Volumetric trend [%·V]</th>
+        </tr>
+        </thead>
+        <tbody>
+        #{list items:neighbours, as:'neighbour'}
+        #{if neighbour != null}
+        <tr ${concept.rank == neighbour.rank ? 'class=info' : ''}>
+            <td>#${neighbour.rank}</td>
+            <td><a style="display: block;" href="@{Application.concept(neighbour.id)}">${neighbour.value}</a></td>
+            <td>${neighbour.trend.format('#.000')}</td>
+            <td>${neighbour.volumetricTrend.format('#')}</td>
+        </tr>
+        #{/if}
+        #{/list}
+        </tbody>
+    </table>
+</div>

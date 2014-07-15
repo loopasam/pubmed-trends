@@ -67,7 +67,7 @@
                     '<em>No concept matched</em>',
                     '</div>'
                 ].join('\n'),
-                suggestion: Handlebars.compile('<p><strong>{{value}}</strong> <em>{{displayTrend}}</em></p>')
+                suggestion: Handlebars.compile('<p><strong>{{value}}</strong> [{{displayTrend}}%]</p>')
             }
         },{
             name: 'journals',
@@ -80,7 +80,7 @@
                     '<em>No ISSN matched</em>',
                     '</div>'
                 ].join('\n'),
-                suggestion: Handlebars.compile('<p><strong>{{issn}}</strong> <em>{{displayOIF}}</em></p>')
+                suggestion: Handlebars.compile('<p><strong>{{issn}}</strong> [{{displayOIF}}]</p>')
             }
         }).on('typeahead:selected', function(e, obj, name){
             $("#searchtype").val(name);

@@ -25,6 +25,8 @@ public class MorphiaJournal extends Model {
 
     public String displayOIF;
 
+    public int rank;
+
     @Indexed
     public String issn;
 
@@ -47,6 +49,7 @@ public class MorphiaJournal extends Model {
         this.issn = issn;
         this.openImpactFactor = 0;
         this.deviationIF = 0;
+        this.rank = 0;
         this.isOldEnough = false;
         this.counts = new ArrayList<Integer>();
     }

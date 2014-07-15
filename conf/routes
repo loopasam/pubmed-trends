@@ -8,6 +8,7 @@ GET     /query/{query}                                       Application.luceneQ
 
 GET     /issn/{issn}                                       Application.journal
 GET     /concept/{id}                                       Application.concept
+GET     /journal/{id}                                       Application.journal
 GET     /trends/{attr}/{sort}                                       Application.trends
 GET     /searchPhrases/{query}.json                                       Application.searchPhrases
 GET     /searchJournals/{query}.json                                       Application.searchJournals

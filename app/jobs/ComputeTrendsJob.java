@@ -122,6 +122,17 @@ public class ComputeTrendsJob extends Job {
         ireader.close();
         directory.close();
 
+        //Compute the rank
+        int rank = 1;
+
+        Logger.info("Computing rank...");
+        phrases = MorphiaPhrase.q().filter("trend exists", true).order("-trend").asList();
+        for (MorphiaPhrase phrase : phrases) {
+            phrase.rank = rank;
+            phrase.save();
+            rank++;
+        }
+
         Logger.info("Job done.");
         stopwatch.stop();
         Utils.emailAdmin("Trends computed", "Job finished in " + stopwatch.elapsed(TimeUnit.MINUTES) + " minutes.");

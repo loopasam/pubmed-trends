@@ -4,21 +4,22 @@
     <h1><span class="fa fa-bar-chart-o"></span> Trends <small>${play.configuration['analysis.year']}</small></h1>
 </div>
 
-<div class="panel panel-default">
+<div class="panel panel-primary">
     <!-- Default panel contents -->
     <div class="panel-heading">Trends in the biomedical literature in ${play.configuration['analysis.year']}</div>
     <table class="table table-bordered table-hover">
         <thead>
-            <tr>
-                <th>Concept</th>
-                <th>
+            <tr class="info">
+                <th class="text-center">Rank</th>
+                <th class="text-center">Concept</th>
+                <th class="text-center">
                     <a style="display: block;" href='#{if sort == 'asc' && attr == 'standard'} @{Application.trends("standard", "desc")} #{/if}
                        #{elseif sort == 'desc' && attr == 'standard'} @{Application.trends("standard", "asc")} #{/elseif}
                        #{elseif attr == 'volume'} @{Application.trends("standard", "desc")} #{/elseif}'>
                        <span class="fa ${attr == 'standard' ? 'fa-arrow-circle-' : ''}${sort == 'asc' ? 'down' : 'up'}"></span> Trend [%] 
                     </a>
                 </th>
-                <th>        
+                <th class="text-center">
                     <a style="display: block;" href='#{if sort == 'asc' && attr == 'volume'} @{Application.trends("volume", "desc")} #{/if}
                        #{elseif sort == 'desc' && attr == 'volume'} @{Application.trends("volume", "asc")} #{/elseif}
                        #{elseif attr == 'standard'} @{Application.trends("volume", "desc")} #{/elseif}'>
@@ -30,6 +31,7 @@
         <tbody>
             #{list items:concepts, as:'concept'}
             <tr>
+                <td>#${concept.rank}</td>
                 <td><a style="display: block;" href="@{Application.concept(concept.id)}">${concept.value}</a></td>
                 <td>${concept.trend.format('#.000')}</td>
                 <td>${concept.volumetricTrend.format('#')}</td>
