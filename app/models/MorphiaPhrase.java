@@ -25,6 +25,7 @@ public class MorphiaPhrase extends Model {
     //Frequency of documents for t(now - 1 year)
     public double frequencyThen;
 
+    @Indexed
     public double trend;
 
     public double volumetricTrend;
@@ -33,7 +34,6 @@ public class MorphiaPhrase extends Model {
 
     public int rank;
 
-    @Indexed
     public boolean isNew;
 
     public MorphiaPhrase(String value, int frequency) {
