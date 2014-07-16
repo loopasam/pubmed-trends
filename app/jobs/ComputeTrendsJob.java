@@ -91,6 +91,7 @@ public class ComputeTrendsJob extends Job {
                 phrase.isNew = true;
             }
 
+            //TODO put in other class SaveIndexJob
             //std(c, t) = doc(c, t) / doc(t)
             //Trend: ( std(c, now) - std(c, then) ) / std(c, then)
             //Volumetric: trend(c, delta) * doc(c, now)

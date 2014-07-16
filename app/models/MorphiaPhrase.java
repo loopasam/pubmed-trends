@@ -24,11 +24,11 @@ public class MorphiaPhrase extends Model {
 
     //Frequency of documents for t(now - 1 year)
     public double frequencyThen;
-    
+
     public double trend;
-    
+
     public double volumetricTrend;
-    
+
     public boolean isNew;
 
     public String displayTrend;

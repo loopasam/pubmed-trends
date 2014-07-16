@@ -9,13 +9,20 @@ import com.google.common.base.Stopwatch;
 import java.util.concurrent.TimeUnit;
 import models.MorphiaPhrase;
 import models.Phrase;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.SlowCompositeReaderWrapper;
 import org.apache.lucene.index.Terms;
 import org.apache.lucene.index.TermsEnum;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
+import org.apache.lucene.util.Version;
 import play.Logger;
 import play.jobs.Job;
 import play.vfs.VirtualFile;
@@ -40,30 +47,60 @@ public class SaveIndexJob extends Job {
         stopwatch.start();
 
         //TODO do not hardcode the date
-        Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/indexes/index-2013").getRealFile());
+        Directory directoryNow = FSDirectory.open(VirtualFile.fromRelativePath("/indexes/index-2013").getRealFile());
+        DirectoryReader ireaderNow = DirectoryReader.open(directoryNow);
 
-        DirectoryReader ireader = DirectoryReader.open(directory);
-        Terms terms = SlowCompositeReaderWrapper.wrap(ireader).terms("contents");
-        TermsEnum iterator = terms.iterator(null);
+        Terms termsNow = SlowCompositeReaderWrapper.wrap(ireaderNow).terms("contents");
+        TermsEnum iteratorNow = termsNow.iterator(null);
         BytesRef byteRef;
 
         int counter = 0;
 
-        while ((byteRef = iterator.next()) != null) {
+        while ((byteRef = iteratorNow.next()) != null) {
             counter++;
             String term = new String(byteRef.bytes, byteRef.offset, byteRef.length);
-
-            //Could be used later
-            int frequency = iterator.docFreq();
-            //Save to DB
-            //check if exists alread, if yes increase the counter, otherwise create
+            int frequency = iteratorNow.docFreq();
             //Saves only the terms with high frequency
-            //Removes the terms with a _ (from shigle index)
+            //Removes the terms with a _ (from shingle index)
             if (frequency > FREQ_TRESHOLD && !term.contains("_")) {
                 new MorphiaPhrase(term, frequency).save();
-                Logger.info("Term (" + counter + "): " + term + " - freq: " + frequency);
+                Logger.info("Term Now (" + counter + "): " + term + " - freq: " + frequency);
             }
         }
+
+        ireaderNow.close();
+        directoryNow.close();
+
+        //Compares against the index of previous year
+        Directory directoryThen = FSDirectory.open(VirtualFile.fromRelativePath("/indexes/index-2012").getRealFile());
+        DirectoryReader ireaderThen = DirectoryReader.open(directoryThen);
+
+        Terms termsThen = SlowCompositeReaderWrapper.wrap(ireaderThen).terms("contents");
+        TermsEnum iteratorThen = termsThen.iterator(null);
+        BytesRef byteRefThen;
+
+        counter = 0;
+
+        while ((byteRefThen = iteratorThen.next()) != null) {
+            counter++;
+            String term = new String(byteRefThen.bytes, byteRefThen.offset, byteRefThen.length);
+            int frequency = iteratorThen.docFreq();
+            //Saves only the terms with high frequency
+            //Removes the terms with a _ (from shingle index)
+            if (frequency > FREQ_TRESHOLD && !term.contains("_")) {
+                MorphiaPhrase phrase = MorphiaPhrase.find("value", term).first();
+                if(phrase != null){
+                    phrase.frequencyThen = frequency;
+                    phrase.save();
+                    //TODO compute OIF here
+                    Logger.info("Term Then (" + counter + "): " + term + " - freq: " + frequency);
+                }
+            }
+        }
+
+        ireaderThen.close();
+        directoryThen.close();
+
         stopwatch.stop();
         Utils.emailAdmin("Indexing in DB done. ", "Job finished in " + stopwatch.elapsed(TimeUnit.MINUTES) + " minutes.");
 
