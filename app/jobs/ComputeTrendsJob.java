@@ -108,15 +108,15 @@ public class ComputeTrendsJob extends Job {
         }
 
         //Compute the rank
-        int rank = 1;
-
-        Logger.info("Computing rank...");
-        phrases = MorphiaPhrase.q().filter("isNew", false).order("-trend").asList();
-        for (MorphiaPhrase phrase : phrases) {
-            phrase.rank = rank;
-            phrase.save();
-            rank++;
-        }
+//        int rank = 1;
+//
+//        Logger.info("Computing rank...");
+//        List<MorphiaPhrase> rankPhrases = MorphiaPhrase.q().filter("isNew", false).order("-trend").asList();
+//        for (MorphiaPhrase phrase : rankPhrases) {
+//            phrase.rank = rank;
+//            phrase.save();
+//            rank++;
+//        }
 
         Logger.info("Job done.");
         stopwatch.stop();
