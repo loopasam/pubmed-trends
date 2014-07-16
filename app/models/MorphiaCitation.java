@@ -39,6 +39,7 @@ public class MorphiaCitation extends Model {
 
     public String abstractText;
 
+    @Indexed
     public Date created;
 
     //Indexed to build the impact factors

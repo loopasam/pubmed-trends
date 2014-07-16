@@ -32,6 +32,7 @@ public class MorphiaPhrase extends Model {
 
     public String displayTrend;
 
+    @Indexed
     public int rank;
 
     public boolean isNew;

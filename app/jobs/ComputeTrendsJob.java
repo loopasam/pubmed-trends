@@ -67,45 +67,45 @@ public class ComputeTrendsJob extends Job {
         //Retrieve all the phrases in the database, and compute
         Logger.info("Retrieving phrases...");
 
-//        List<MorphiaPhrase> phrases = MorphiaPhrase.findAll();
-//        int total = phrases.size();
-//        int counter = 0;
+        List<MorphiaPhrase> phrases = MorphiaPhrase.findAll();
+        int total = phrases.size();
+        int counter = 0;
 
-//        for (MorphiaPhrase phrase : phrases) {
-//            Stopwatch time = Stopwatch.createUnstarted();
-//            time.start();
-//            counter++;
-//            Logger.info("i: " + counter + "/" + total + " (" + phrase.value + ")");
-//            if(phrase.frequencyThen != 0){
-//                //std(c, t) = doc(c, t) / doc(t)
-//                //Trend: ( std(c, now) - std(c, then) ) / std(c, then)
-//                //Volumetric: trend(c, delta) * doc(c, now)
-//                //doc(now) = totalDocsNow
-//                //doc(then) = totalDocsThen
-//                //doc(c, now) = frequencyNow
-//                //doc(c, then) = frequencyThen
-//                //std(c, now) = frequencyNow / totalDocsNow = stdNow
-//                double stdNow = (double) phrase.frequencyNow / totalDocsNow;
-//                Logger.info("phrase.frequencyNow: " + phrase.frequencyNow);
-//                Logger.info("stdNow: " + stdNow);
-//                //std(c, then) = frequencyThen / totalDocsThen = stdThen
-//                double stdThen = (double) phrase.frequencyThen / totalDocsThen;
-//                Logger.info("frequencyThen: " + phrase.frequencyThen);
-//                Logger.info("stdThen: " + stdThen);
-//                //trend(c, delta) = ( stdNow - stdThen ) / stdThen
-//                double trend = (stdNow - stdThen) / stdThen * 100;
-//                Logger.info("Trend: " + trend);
-//                double volumetricTrend = trend * phrase.frequencyNow;
-//                Logger.info("Volumetric trend: " + volumetricTrend);
-//                phrase.trend = trend;
-//                phrase.volumetricTrend = volumetricTrend;
-//                phrase.displayTrend = new DecimalFormat("#.00").format(trend);
-//            }else{
-//                phrase.isNew = true;
-//            }
-//
-//            phrase.save();
-//        }
+        for (MorphiaPhrase phrase : phrases) {
+            Stopwatch time = Stopwatch.createUnstarted();
+            time.start();
+            counter++;
+            Logger.info("i: " + counter + "/" + total + " (" + phrase.value + ")");
+            if(phrase.frequencyThen != 0){
+                //std(c, t) = doc(c, t) / doc(t)
+                //Trend: ( std(c, now) - std(c, then) ) / std(c, then)
+                //Volumetric: trend(c, delta) * doc(c, now)
+                //doc(now) = totalDocsNow
+                //doc(then) = totalDocsThen
+                //doc(c, now) = frequencyNow
+                //doc(c, then) = frequencyThen
+                //std(c, now) = frequencyNow / totalDocsNow = stdNow
+                double stdNow = (double) phrase.frequencyNow / totalDocsNow;
+                Logger.info("phrase.frequencyNow: " + phrase.frequencyNow);
+                Logger.info("stdNow: " + stdNow);
+                //std(c, then) = frequencyThen / totalDocsThen = stdThen
+                double stdThen = (double) phrase.frequencyThen / totalDocsThen;
+                Logger.info("frequencyThen: " + phrase.frequencyThen);
+                Logger.info("stdThen: " + stdThen);
+                //trend(c, delta) = ( stdNow - stdThen ) / stdThen
+                double trend = (stdNow - stdThen) / stdThen * 100;
+                Logger.info("Trend: " + trend);
+                double volumetricTrend = trend * phrase.frequencyNow;
+                Logger.info("Volumetric trend: " + volumetricTrend);
+                phrase.trend = trend;
+                phrase.volumetricTrend = volumetricTrend;
+                phrase.displayTrend = new DecimalFormat("#.00").format(trend);
+            }else{
+                phrase.isNew = true;
+            }
+
+            phrase.save();
+        }
 
         //Compute the rank
         int rank = 1;
