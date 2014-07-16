@@ -94,7 +94,7 @@ public class Application extends Controller {
             property = "volumetricTrend";
         }
 
-        List<MorphiaPhrase> concepts = MorphiaPhrase.q().filter("trend exists", true).filter("isNew", false).order(direction + property).limit(50).asList();
+        List<MorphiaPhrase> concepts = MorphiaPhrase.q().filter("isNew", false).order(direction + property).limit(50).asList();
         render(concepts, attr, sort);
     }
 

@@ -64,13 +64,6 @@ public class ComputeTrendsJob extends Job {
 
         Logger.info("Previous year: " + then);
 
-        Logger.info("Reading index...");
-        Directory directory = FSDirectory.open(VirtualFile.fromRelativePath("/indexes/index-" + then).getRealFile());
-        DirectoryReader ireader = DirectoryReader.open(directory);
-        Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_47);
-        this.isearcher = new IndexSearcher(ireader);
-        this.parser = new QueryParser(Version.LUCENE_47, "contents", analyzer);
-
         //Retrieve all the phrases in the database, and compute
         Logger.info("Retrieving phrases...");
 
@@ -83,51 +76,42 @@ public class ComputeTrendsJob extends Job {
             time.start();
             counter++;
             Logger.info("i: " + counter + "/" + total + " (" + phrase.value + ")");
-            int frequencyThen = query("\"" + phrase.value + "\"");
-            time.stop();
-            Logger.info("- Query time: " + time.elapsed(TimeUnit.MILLISECONDS));
-
-            if (frequencyThen == 0) {
+            if(phrase.frequencyThen != 0){
+                //std(c, t) = doc(c, t) / doc(t)
+                //Trend: ( std(c, now) - std(c, then) ) / std(c, then)
+                //Volumetric: trend(c, delta) * doc(c, now)
+                //doc(now) = totalDocsNow
+                //doc(then) = totalDocsThen
+                //doc(c, now) = frequencyNow
+                //doc(c, then) = frequencyThen
+                //std(c, now) = frequencyNow / totalDocsNow = stdNow
+                double stdNow = (double) phrase.frequencyNow / totalDocsNow;
+                Logger.info("phrase.frequencyNow: " + phrase.frequencyNow);
+                Logger.info("stdNow: " + stdNow);
+                //std(c, then) = frequencyThen / totalDocsThen = stdThen
+                double stdThen = (double) phrase.frequencyThen / totalDocsThen;
+                Logger.info("frequencyThen: " + phrase.frequencyThen);
+                Logger.info("stdThen: " + stdThen);
+                //trend(c, delta) = ( stdNow - stdThen ) / stdThen
+                double trend = (stdNow - stdThen) / stdThen * 100;
+                Logger.info("Trend: " + trend);
+                double volumetricTrend = trend * phrase.frequencyNow;
+                Logger.info("Volumetric trend: " + volumetricTrend);
+                phrase.trend = trend;
+                phrase.volumetricTrend = volumetricTrend;
+                phrase.displayTrend = new DecimalFormat("#.00").format(trend);
+            }else{
                 phrase.isNew = true;
             }
 
-            //TODO put in other class SaveIndexJob
-            //std(c, t) = doc(c, t) / doc(t)
-            //Trend: ( std(c, now) - std(c, then) ) / std(c, then)
-            //Volumetric: trend(c, delta) * doc(c, now)
-            //doc(now) = totalDocsNow
-            //doc(then) = totalDocsThen
-            //doc(c, now) = frequencyNow
-            //doc(c, then) = frequencyThen
-            //std(c, now) = frequencyNow / totalDocsNow = stdNow
-            double stdNow = (double) phrase.frequencyNow / totalDocsNow;
-            Logger.info("phrase.frequencyNow: " + phrase.frequencyNow);
-            Logger.info("stdNow: " + stdNow);
-            //std(c, then) = frequencyThen / totalDocsThen = stdThen
-            double stdThen = (double) frequencyThen / totalDocsThen;
-            Logger.info("frequencyThen: " + frequencyThen);
-            Logger.info("stdThen: " + stdThen);
-            //trend(c, delta) = ( stdNow - stdThen ) / stdThen
-            double trend = (stdNow - stdThen) / stdThen * 100;
-            Logger.info("Trend: " + trend);
-            double volumetricTrend = trend * phrase.frequencyNow;
-            Logger.info("Volumetric trend: " + volumetricTrend);
-
-            phrase.trend = trend;
-            phrase.frequencyThen = frequencyThen;
-            phrase.volumetricTrend = volumetricTrend;
-            phrase.displayTrend = new DecimalFormat("#.00").format(trend);
             phrase.save();
         }
-
-        ireader.close();
-        directory.close();
 
         //Compute the rank
         int rank = 1;
 
         Logger.info("Computing rank...");
-        phrases = MorphiaPhrase.q().filter("trend exists", true).order("-trend").asList();
+        phrases = MorphiaPhrase.q().filter("isNew", false).order("-trend").asList();
         for (MorphiaPhrase phrase : phrases) {
             phrase.rank = rank;
             phrase.save();
@@ -140,11 +124,5 @@ public class ComputeTrendsJob extends Job {
 
     }
 
-    private int query(String queryString) throws Exception {
-        Query query = this.parser.parse(queryString);
-        ScoreDoc[] hits = this.isearcher.search(query, 10000000).scoreDocs;
-        int numbers = hits.length;
-        return numbers;
-    }
 
 }
