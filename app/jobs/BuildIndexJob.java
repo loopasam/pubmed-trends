@@ -29,6 +29,7 @@ import play.jobs.Job;
 import play.modules.morphia.Model;
 import play.vfs.VirtualFile;
 import utils.CustomStopWordsStandardAnalyzer;
+import utils.Utils;
 
 /**
  * TO KEEP Compute the stratified indexes, high memory job
@@ -115,6 +116,7 @@ public class BuildIndexJob extends Job {
             iwriter.close();
         }
         stopwatch.stop();
+        Utils.emailAdmin("Indexing done. ", "Job finished in " + stopwatch.elapsed(TimeUnit.MINUTES) + " minutes.");
         Logger.info("Time to index the documents: " + stopwatch.elapsed(TimeUnit.MINUTES));
     }
 
