@@ -45,7 +45,6 @@ public class ComputeMorphiaIF extends Job {
         for (MorphiaJournal journal : journals) {
             counter++;
 
-
             List<MorphiaCitation> citations
                     = MorphiaCitation.q().filter("created <", end).filter("journalAbbreviation", journal.issn).asList();
 

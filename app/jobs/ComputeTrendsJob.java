@@ -122,6 +122,9 @@ public class ComputeTrendsJob extends Job {
         stopwatch.stop();
         Utils.emailAdmin("Trends computed", "Job finished in " + stopwatch.elapsed(TimeUnit.MINUTES) + " minutes.");
 
+        //TODO: remove terms with numbers trailing e.g. october 2012, however 2, 2012 were
+        //remove extra stop words too, one on the top of the volumetric list
+        //merge the strings together, no positive score?
     }
 
 

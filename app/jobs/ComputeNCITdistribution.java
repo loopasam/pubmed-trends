@@ -6,22 +6,12 @@
 package jobs;
 
 import com.google.common.base.Stopwatch;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import models.MorphiaOntologyTerm;
-import models.OntologyTerm;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -32,7 +22,7 @@ import org.apache.lucene.util.Version;
 import play.Logger;
 import play.jobs.Job;
 import play.vfs.VirtualFile;
-import utils.CustomStandardAnalyzer;
+import utils.CustomStopWordsStandardAnalyzer;
 import utils.Utils;
 
 /**
@@ -59,7 +49,7 @@ public class ComputeNCITdistribution extends Job {
         DirectoryReader ireader = DirectoryReader.open(directory);
 
         //Just chunck the words - no stop word removal - such concept will not give any result in principle
-        Analyzer analyzer = new CustomStandardAnalyzer(Version.LUCENE_47);
+        Analyzer analyzer = new CustomStopWordsStandardAnalyzer(Version.LUCENE_47);
         IndexSearcher isearcher = new IndexSearcher(ireader);
         QueryParser parser = new QueryParser(Version.LUCENE_47, "contents", analyzer);
 

@@ -5,13 +5,8 @@
  */
 package jobs;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import models.MorphiaOntologyTerm;
@@ -23,9 +18,8 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.util.Version;
 import play.Logger;
 import play.jobs.Job;
-import play.libs.WS;
 import uk.ac.ebi.brain.core.Brain;
-import utils.CustomStandardAnalyzer;
+import utils.CustomStopWordsStandardAnalyzer;
 
 /**
  * TO KEEP
@@ -85,7 +79,7 @@ public class LoadOntologyJob extends Job {
     //Returns the total length of the concept, not considering stop words
     private int getTotalLength(String label) throws IOException {
         //Analyzer doesn't remomve stop words
-        Analyzer customanalyzer = new CustomStandardAnalyzer(Version.LUCENE_47);
+        Analyzer customanalyzer = new CustomStopWordsStandardAnalyzer(Version.LUCENE_47);
         List<String> resultStop = new ArrayList<String>();
         TokenStream customstream = customanalyzer.tokenStream(null, new StringReader(label));
         customstream.reset();

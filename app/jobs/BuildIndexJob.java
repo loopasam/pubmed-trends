@@ -7,14 +7,15 @@ package jobs;
 
 import com.google.common.base.Stopwatch;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import models.Citation;
 import models.MorphiaCitation;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.core.StopFilter;
 import org.apache.lucene.analysis.shingle.ShingleAnalyzerWrapper;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.util.CharArraySet;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
@@ -27,6 +28,7 @@ import play.Logger;
 import play.jobs.Job;
 import play.modules.morphia.Model;
 import play.vfs.VirtualFile;
+import utils.CustomStopWordsStandardAnalyzer;
 
 /**
  * TO KEEP Compute the stratified indexes, high memory job
@@ -41,7 +43,26 @@ public class BuildIndexJob extends Job {
         Stopwatch stopwatch = Stopwatch.createUnstarted();
         stopwatch.start();
 
-        Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_47);
+        CharArraySet stopSet = CharArraySet.copy(Version.LUCENE_47, StandardAnalyzer.STOP_WORDS_SET);
+        stopSet.add("we");
+        stopSet.add("pmid");
+        stopSet.add("were");
+        stopSet.add("from");
+        stopSet.add("reply");
+        stopSet.add("can");
+        stopSet.add("between");
+        stopSet.add("using");
+        stopSet.add("used");
+        stopSet.add("however");
+        stopSet.add("which");
+        stopSet.add("our");
+        stopSet.add("among");
+        stopSet.add("while");
+        stopSet.add("this");
+
+
+        StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_47, stopSet);
+//        Analyzer analyzer = new CustomStopWordsStandardAnalyzer(Version.LUCENE_47);
         //Does [1-5]-grams, as determined by previous graphs
         ShingleAnalyzerWrapper shingleAnalyzer = new ShingleAnalyzerWrapper(analyzer, 2, 5);
         int now = Integer.parseInt((String) play.Play.configuration.get("analysis.year"));
@@ -74,7 +95,8 @@ public class BuildIndexJob extends Job {
                 Document doc = new Document();
                 String contents = "";
 
-                //TODO save the PMID?
+                doc.add(new Field("pmid", citation.pmid, TextField.TYPE_STORED));
+
                 if (citation.abstractText != null) {
                     contents += citation.abstractText;
                 }

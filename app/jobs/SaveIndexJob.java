@@ -25,6 +25,7 @@ import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.Version;
 import play.Logger;
 import play.jobs.Job;
+import play.test.MorphiaFixtures;
 import play.vfs.VirtualFile;
 import utils.Utils;
 
@@ -43,6 +44,7 @@ public class SaveIndexJob extends Job {
     @Override
     public void doJob() throws Exception {
         Logger.info("Saving index in DB...");
+        MorphiaFixtures.delete(MorphiaPhrase.class);
         Stopwatch stopwatch = Stopwatch.createUnstarted();
         stopwatch.start();
 
@@ -62,7 +64,7 @@ public class SaveIndexJob extends Job {
             int frequency = iteratorNow.docFreq();
             //Saves only the terms with high frequency
             //Removes the terms with a _ (from shingle index)
-            if (frequency > FREQ_TRESHOLD && !term.contains("_")) {
+            if (frequency > FREQ_TRESHOLD && !term.contains("_") && !term.matches(".*\\d\\s.*") && !term.matches(".*\\s\\d.*")) {
                 new MorphiaPhrase(term, frequency).save();
                 Logger.info("Term Now (" + counter + "): " + term + " - freq: " + frequency);
             }
@@ -87,7 +89,7 @@ public class SaveIndexJob extends Job {
             int frequency = iteratorThen.docFreq();
             //Saves only the terms with high frequency
             //Removes the terms with a _ (from shingle index)
-            if (frequency > FREQ_TRESHOLD && !term.contains("_")) {
+            if (frequency > FREQ_TRESHOLD && !term.contains("_") && !term.matches(".*\\d\\s.*") && !term.matches(".*\\s\\d.*")) {
                 MorphiaPhrase phrase = MorphiaPhrase.find("value", term).first();
                 if(phrase != null){
                     phrase.frequencyThen = frequency;

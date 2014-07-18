@@ -26,7 +26,7 @@ public class LuceneIndexing extends Job {
 
         Logger.info("Indexing started...");
 
-//        Analyzer analyzer = new CustomStandardAnalyzer(Version.LUCENE_47);
+//        Analyzer analyzer = new CustomStopWordsStandardAnalyzer(Version.LUCENE_47);
         Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_47);
         ShingleAnalyzerWrapper shingleAnalyzer = new ShingleAnalyzerWrapper(analyzer, 2, 5);
 
